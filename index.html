@@ -1,135 +1,190 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>Agenda - Espaço Kleblene Moraes</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agenda Fácil</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
 <style>
-body { font-family: Arial; background:#f4f4f4; padding:20px; }
-h1 { text-align:center; }
-.container { max-width:700px; margin:auto; background:white; padding:20px; border-radius:10px; }
-input, select, button { width:100%; padding:8px; margin:5px 0; }
-.slot { padding:10px; margin:5px 0; border-radius:5px; cursor:pointer; }
-.disponivel { background:#d4edda; }
-.ocupado { background:#f8d7da; }
-.lista-item { background:#eee; padding:8px; margin:5px 0; border-radius:5px; display:flex; justify-content:space-between; }
-button.excluir { background:red; color:white; border:none; padding:5px 10px; cursor:pointer; }
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #f8e8ee, #e3f2fd);
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.container {
+    background: white;
+    width: 100%;
+    max-width: 500px;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #7b5ea7;
+    margin-bottom: 20px;
+}
+
+label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #555;
+}
+
+input, select, button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 6px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #7b5ea7;
+    color: white;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background-color: #684a91;
+}
+
+.agendamentos {
+    margin-top: 20px;
+}
+
+.card {
+    background: #fdf4ff;
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card button {
+    width: auto;
+    padding: 6px 10px;
+    font-size: 11px;
+    background: #ff6b81;
+}
+
+.card button:hover {
+    background: #e05670;
+}
+
+.footer {
+    text-align: center;
+    font-size: 12px;
+    margin-top: 20px;
+    color: #999;
+}
 </style>
 </head>
+
 <body>
 
 <div class="container">
-<h1>Agenda - Espaço Kleblene Moraes</h1>
+    <h1>Agenda Fácil</h1>
 
-<label>Data:</label>
-<input type="date" id="data">
+    <label>Nome do Cliente</label>
+    <input type="text" id="nome">
 
-<div id="horarios"></div>
+    <label>Telefone</label>
+    <input type="text" id="telefone">
 
-<hr>
+    <label>Data</label>
+    <input type="date" id="data">
 
-<h3>Novo Agendamento</h3>
-<input type="text" id="nome" placeholder="Nome do Cliente">
-<input type="text" id="telefone" placeholder="Telefone (somente números)">
-<select id="servico">
-<option>Manicure</option>
-<option>Designer de Sobrancelhas</option>
-<option>Micropigmentação</option>
-</select>
-<input type="time" id="hora">
-<button onclick="agendar()">Agendar</button>
+    <label>Horário</label>
+    <input type="time" id="hora">
 
-<hr>
-<h3>Agendamentos do Dia</h3>
-<div id="lista"></div>
+    <button onclick="agendar()">Agendar</button>
 
+    <div class="agendamentos">
+        <h3>Agendamentos do Dia</h3>
+        <div id="lista"></div>
+    </div>
+
+    <div class="footer">
+        Sistema Beta • Espaço Klebylenne Moraes
+    </div>
 </div>
 
 <script>
-let horariosFixos = ["08:00","09:00","10:00","11:00","14:00","15:00","16:00","17:00"];
 
-function carregarHorarios(){
-    let data = document.getElementById("data").value;
-    let container = document.getElementById("horarios");
-    let lista = document.getElementById("lista");
-    container.innerHTML = "";
+function carregarAgendamentos() {
+    const dataSelecionada = document.getElementById("data").value;
+    const lista = document.getElementById("lista");
     lista.innerHTML = "";
 
-    let agendamentos = JSON.parse(localStorage.getItem("agenda")) || [];
+    const agendamentos = JSON.parse(localStorage.getItem("agendamentos")) || [];
 
-    horariosFixos.forEach(hora=>{
-        let div = document.createElement("div");
-        div.classList.add("slot");
+    const filtrados = agendamentos.filter(a => a.data === dataSelecionada);
 
-        let ocupado = agendamentos.find(a=> a.data==data && a.hora==hora);
-
-        if(ocupado){
-            div.classList.add("ocupado");
-            div.innerHTML = hora + " - " + ocupado.nome;
-        } else {
-            div.classList.add("disponivel");
-            div.innerHTML = hora + " - Disponível";
-            div.onclick = function(){
-                document.getElementById("hora").value = hora;
-            }
-        }
-
-        container.appendChild(div);
-    });
-
-    agendamentos
-    .filter(a=>a.data==data)
-    .forEach((a,index)=>{
-        let item = document.createElement("div");
-        item.classList.add("lista-item");
-        item.innerHTML = `${a.hora} - ${a.nome} (${a.servico}) 
-        <button class="excluir" onclick="excluir(${index})">X</button>`;
-        lista.appendChild(item);
+    filtrados.forEach((ag, index) => {
+        lista.innerHTML += `
+            <div class="card">
+                ${ag.hora} - ${ag.nome}
+                <button onclick="excluir(${index})">Excluir</button>
+            </div>
+        `;
     });
 }
 
-function agendar(){
-    let nome = document.getElementById("nome").value;
-    let telefone = document.getElementById("telefone").value;
-    let servico = document.getElementById("servico").value;
-    let data = document.getElementById("data").value;
-    let hora = document.getElementById("hora").value;
+function agendar() {
+    const nome = document.getElementById("nome").value;
+    const telefone = document.getElementById("telefone").value;
+    const data = document.getElementById("data").value;
+    const hora = document.getElementById("hora").value;
 
-    if(!nome || !telefone || !data || !hora){
+    if (!nome || !telefone || !data || !hora) {
         alert("Preencha todos os campos!");
         return;
     }
 
-    let agenda = JSON.parse(localStorage.getItem("agenda")) || [];
+    let agendamentos = JSON.parse(localStorage.getItem("agendamentos")) || [];
 
-    let jaExiste = agenda.find(a=> a.data==data && a.hora==hora);
-    if(jaExiste){
-        alert("Esse horário já está ocupado!");
+    const conflito = agendamentos.find(a => a.data === data && a.hora === hora);
+
+    if (conflito) {
+        alert("Horário já agendado!");
         return;
     }
 
-    agenda.push({nome, telefone, servico, data, hora});
-    localStorage.setItem("agenda", JSON.stringify(agenda));
+    agendamentos.push({ nome, telefone, data, hora });
+    localStorage.setItem("agendamentos", JSON.stringify(agendamentos));
 
-    let mensagem = `Olá ${nome}, seu horário para ${servico} está confirmado para ${data} às ${hora}.`;
-    window.open(`https://wa.me/55${telefone}?text=${encodeURIComponent(mensagem)}`);
+    const mensagem = `Olá ${nome}, seu horário está confirmado para ${data} às ${hora}.`;
+    window.open(`https://wa.me/55${telefone}?text=${encodeURIComponent(mensagem)}`, "_blank");
 
-    carregarHorarios();
+    carregarAgendamentos();
 }
 
-function excluir(index){
-    let agenda = JSON.parse(localStorage.getItem("agenda")) || [];
-    agenda.splice(index,1);
-    localStorage.setItem("agenda", JSON.stringify(agenda));
-    carregarHorarios();
+function excluir(index) {
+    let agendamentos = JSON.parse(localStorage.getItem("agendamentos")) || [];
+    agendamentos.splice(index, 1);
+    localStorage.setItem("agendamentos", JSON.stringify(agendamentos));
+    carregarAgendamentos();
 }
 
-document.getElementById("data").addEventListener("change", carregarHorarios);
+document.getElementById("data").addEventListener("change", carregarAgendamentos);
 
-window.onload = function(){
-    let hoje = new Date().toISOString().split("T")[0];
-    document.getElementById("data").value = hoje;
-    carregarHorarios();
-}
 </script>
 
 </body>
