@@ -284,7 +284,32 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+/* ===== FUNÇÕES VISUAIS ===== */
 
+function showTab(tab){
+    document.querySelectorAll(".tab").forEach(t=>t.style.display="none")
+    document.getElementById(tab).style.display="block"
+
+    document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"))
+    event.target.classList.add("active")
+}
+
+function toggleSidebar(){
+    document.getElementById("sidebar").classList.toggle("open")
+}
+
+function toggleDark(){
+    document.body.classList.toggle("dark")
+}
+
+function abrirModal(id){
+    document.getElementById(id).style.display="flex"
+}
+
+function fecharModal(){
+    document.querySelectorAll(".modal").forEach(m=>m.style.display="none")
+}
+    
 /* SERVIÇOS */
 function addServico(){
     const nome = document.getElementById("servicoNome").value
@@ -369,5 +394,6 @@ carregarAgendamentos()
 
 </body>
 </html>
+
 
 
