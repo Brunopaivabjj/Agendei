@@ -4,133 +4,57 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Agendei</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-<style>
-:root { 
-    --primary: #7b5ea7; --secondary: #fdf4ff; --accent: #ff6b81; --edit: #4a90e2;
-    --bg: linear-gradient(135deg, #f8e8ee, #e3f2fd); --text: #333; --card-bg: #ffffff;
-}
-body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; transition: 0.3s; }
-.container { background: var(--card-bg); width: 100%; max-width: 500px; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); box-sizing: border-box; }
-
-/* TELAS */
-#tela-login { display: flex; flex-direction: column; gap: 15px; text-align: center; }
-#app-principal { display: none; }
-
-/* MODAIS */
-.modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); overflow-y: auto; }
-.modal-content { background: var(--card-bg); margin: 5% auto; padding: 25px; border-radius: 20px; width: 90%; max-width: 450px; position: relative; }
-.close { position: absolute; right: 20px; top: 10px; font-size: 28px; cursor: pointer; color: var(--primary); }
-
-/* TABS */
-.nav-tabs { display: flex; justify-content: space-around; margin-bottom: 25px; border-bottom: 2px solid #eee; }
-.tab-item { padding: 10px; cursor: pointer; font-weight: 600; color: #999; }
-.tab-item.active { color: var(--primary); border-bottom: 3px solid var(--primary); }
-.content-section { display: none; }
-.content-section.active { display: block; }
-
-/* UI ELEMENTS */
-label { font-size: 13px; font-weight: 600; display: block; margin-top: 15px; text-align: left; }
-input, select, button { width: 100%; padding: 12px; margin-top: 6px; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; font-family: inherit; }
-button { background-color: var(--primary); color: white; border: none; font-weight: 600; cursor: pointer; }
-.btn-social { background: white; color: #444; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px; }
-
-.card-item { background: var(--secondary); padding: 15px; border-radius: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #7b5ea722; }
-.actions { display: flex; gap: 8px; }
-.btn-mini { width: auto; font-size: 12px; padding: 6px 10px; margin: 0; border-radius: 8px; }
-.btn-edit { background: var(--edit); }
-.btn-del { background: var(--accent); }
-.grid-half { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-</style>
 </head>
 <body>
 
-<!-- LOGIN -->
-<div id="tela-login" class="container">
-    <h2>Agendei</h2>
-    <p style="color: #666; font-size: 14px;">Gerencie sua clínica ou salão</p>
-    <input type="email" id="login-email" placeholder="E-mail">
-    <input type="password" id="login-senha" placeholder="Senha">
-    <button id="btn-entrar">Entrar</button>
-    <div style="color: #ccc; font-size: 12px; margin: 10px 0;">OU</div>
-    <button id="btn-google" class="btn-social"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" width="18"> Google</button>
-</div>
+<h2>Agendei</h2>
+<input type="email" id="login-email" placeholder="E-mail">
+<input type="password" id="login-senha" placeholder="Senha">
+<button id="btn-entrar">Entrar</button>
+<button id="btn-google">Login com Google</button>
 
-<!-- APP PRINCIPAL -->
-<div id="app-principal" class="container">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-        <small id="user-display" style="color: var(--primary); font-weight: 600;"></small>
-        <button id="btn-sair" class="btn-mini btn-del">Sair</button>
-    </div>
+<script type="module">
+  // 🔹 IMPORTS DO FIREBASE VIA CDN
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
 
-    <div class="nav-tabs">
-        <div class="tab-item active" id="tab-agendar">Agendar</div>
-        <div class="tab-item" id="tab-dashboard">Agenda</div>
-        <div class="tab-item" id="tab-config">Ajustes</div>
-    </div>
+  // 🔹 CONFIGURAÇÃO DO SEU FIREBASE
+  const firebaseConfig = {
+    apiKey: "AIzaSyAxyovmqjNYIzOYYDZZnduquiJQeK4UIgc",
+    authDomain: "agendei-d721e.firebaseapp.com",
+    projectId: "agendei-d721e",
+    storageBucket: "agendei-d721e.firebasestorage.app",
+    messagingSenderId: "525023801595",
+    appId: "1:525023801595:web:71a6d72e986e6e9e30005e"
+  };
 
-    <div id="sec-agendar" class="content-section active">
-        <h2>Novo Agendamento</h2>
-        <label>Serviço</label>
-        <select id="sel-serv-ag"><option>Carregando...</option></select>
-        <label>Profissional</label>
-        <select id="sel-prof-ag"><option>Quem atende?</option></select>
-        <label>Cliente</label>
-        <input type="text" id="cli-nome">
-        <div class="grid-half">
-            <input type="date" id="cli-data">
-            <input type="time" id="cli-hora">
-        </div>
-        <button id="btn-confirmar-ag">Confirmar</button>
-    </div>
+  // 🔹 INICIALIZAÇÃO
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
 
-    <div id="sec-dashboard" class="content-section">
-        <h2>Agenda do Dia</h2>
-        <input type="date" id="filtro-data-agenda">
-        <div id="lista-agendamentos" style="margin-top: 15px;"></div>
-    </div>
+  // 🔹 LOGIN EMAIL/SENHA
+  document.getElementById('btn-entrar').onclick = () => {
+    const email = document.getElementById('login-email').value;
+    const senha = document.getElementById('login-senha').value;
+    signInWithEmailAndPassword(auth, email, senha)
+      .then(user => alert("Login realizado: " + user.user.email))
+      .catch(err => alert("Erro no login: " + err.message));
+  };
 
-    <div id="sec-config" class="content-section">
-        <div class="grid-half">
-            <button onclick="abrirModalServico()" style="background: #2ecc71;">+ Serviço</button>
-            <button onclick="abrirPerfil()" style="background: #2ecc71;">+ Equipe</button>
-        </div>
-        <hr>
-        <h3>Serviços Gerais</h3>
-        <div id="lista-serv-gerais"></div>
-        <hr>
-        <h3>Equipe</h3>
-        <div id="lista-perfis-equipe"></div>
-    </div>
-</div>
+  // 🔹 LOGIN GOOGLE
+  document.getElementById('btn-google').onclick = () => {
+    const provider = new GoogleAuthProvider();
+    signInWithPopup(auth, provider)
+      .then(result => alert("Login Google: " + result.user.email))
+      .catch(err => alert("Erro no Google: " + err.message));
+  };
 
-<!-- MODAIS -->
-<div id="modal-servico" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="fecharModais()">&times;</span>
-        <h3 id="titulo-servico">Serviço</h3>
-        <input type="hidden" id="gs-id-edit">
-        <label>Nome</label><input type="text" id="gs-nome">
-        <div class="grid-half">
-            <div><label>Tempo (min)</label><input type="number" id="gs-tempo"></div>
-            <div><label>Preço (R$)</label><input type="number" id="gs-preco"></div>
-        </div>
-        <button id="btn-salvar-serv-geral" style="margin-top:20px;">Salvar</button>
-    </div>
-</div>
+  // 🔹 MONITORA SE HÁ USUÁRIO LOGADO
+  onAuthStateChanged(auth, user => {
+    if(user) console.log("Usuário logado:", user.email);
+    else console.log("Nenhum usuário logado");
+  });
+</script>
 
-<div id="modal-perfil" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="fecharModais()">&times;</span>
-        <h3>Editar Perfil</h3>
-        <input type="hidden" id="modal-prof-id">
-        <label>Nome</label><input type="text" id="modal-input-nome">
-        <label>Serviços que realiza:</label>
-        <div id="lista-servicos-personalizados"></div>
-        <button id="btn-salvar-perfil-total" style="background: #2ecc71; margin-top:20px;">Salvar Alterações</button>
-    </div>
-</div>
-
-<script type="module" src="app.js"></script>
 </body>
 </html>
