@@ -1,67 +1,134 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agendei - Espaço Kleblene Moraes</title>
-    <style>
-        :root {
-            --primary: #d4a373;
-            --secondary: #faedcd;
-            --dark: #1f1f1f;
-            --white: #ffffff;
-        }
-        body { font-family: 'Segoe UI', sans-serif; background-color: #fefae0; margin: 0; padding: 20px; color: var(--dark); }
-        .container { max-width: 500px; margin: 0 auto; background: var(--white); padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h2 { text-align: center; color: var(--primary); }
-        .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background: var(--primary); border: none; color: white; border-radius: 8px; font-size: 16px; cursor: pointer; transition: 0.3s; }
-        button:hover { background: #bc8a5f; }
-        .lista-agendamentos { margin-top: 30px; }
-        .card { background: #fff; border-left: 5px solid var(--primary); padding: 15px; margin-bottom: 10px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: relative; }
-        .card p { margin: 5px 0; }
-        .btn-delete { color: #e74c3c; cursor: pointer; font-size: 0.8em; text-decoration: underline; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agenda Fácil - Espaço Klebylenne Moraes</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+/* SEU ESTILO ORIGINAL PRESERVADO */
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #f8e8ee, #e3f2fd);
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.container {
+    background: white;
+    width: 100%;
+    max-width: 500px;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #7b5ea7;
+    margin-bottom: 20px;
+}
+
+label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #555;
+}
+
+input, select, button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 6px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #7b5ea7;
+    color: white;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background-color: #684a91;
+}
+
+.agendamentos {
+    margin-top: 20px;
+}
+
+.card {
+    background: #fdf4ff;
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card button {
+    width: auto;
+    padding: 6px 10px;
+    font-size: 11px;
+    background: #ff6b81;
+    margin: 0;
+}
+
+.footer {
+    text-align: center;
+    font-size: 12px;
+    margin-top: 20px;
+    color: #999;
+}
+</style>
 </head>
+
 <body>
 
 <div class="container">
-    <h2>Agendei - Beta 0.3</h2>
-    
-    <div class="form-group">
-        <label>Nome do Cliente</label>
-        <input type="text" id="cliente" placeholder="Ex: Maria Silva">
-    </div>
-    
-    <div class="form-group">
-        <label>Serviço</label>
-        <select id="servico">
-            <option value="Cabelo">Cabelo</option>
-            <option value="Manicure">Manicure</option>
-            <option value="Sobrancelha">Sobrancelha</option>
-            <option value="Outro">Outro</option>
-        </select>
+    <h1>Agenda Fácil</h1>
+
+    <label>Nome do Cliente</label>
+    <input type="text" id="nome">
+
+    <label>Telefone (com DDD)</label>
+    <input type="text" id="telefone" placeholder="Ex: 11999999999">
+
+    <label>Data</label>
+    <input type="date" id="data">
+
+    <label>Horário</label>
+    <input type="time" id="hora">
+
+    <button id="btnAgendar">Agendar e Avisar no WhatsApp</button>
+
+    <div class="agendamentos">
+        <h3>Agendamentos do Dia</h3>
+        <div id="lista"></div>
     </div>
 
-    <div class="form-group">
-        <label>Data e Hora</label>
-        <input type="datetime-local" id="dataHora">
+    <div class="footer">
+        Sistema Beta • Espaço Klebylenne Moraes
     </div>
-
-    <button id="btnAgendar">Confirmar Agendamento</button>
-
-    <div class="lista-agendamentos" id="lista">
-        <h3>Próximos Horários</h3>
-        </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, where, doc, deleteDoc, orderBy } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
-    // Suas credenciais que você me enviou
+    // Suas credenciais
     const firebaseConfig = {
         apiKey: "AIzaSyAxyovmqjNYIzOYYDZZnduquiJQeK4UIgc",
         authDomain: "agendei-d721e.firebaseapp.com",
@@ -72,67 +139,81 @@
         measurementId: "G-YQP41N6MJ3"
     };
 
-    // Inicializar Firebase e Firestore
+    // Inicialização
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const agendamentosRef = collection(db, "agendamentos");
 
-    // Elementos da tela
+    // Elementos
     const btnAgendar = document.getElementById('btnAgendar');
-    const lista = document.getElementById('lista');
+    const listaDiv = document.getElementById('lista');
+    const inputData = document.getElementById('data');
 
-    // FUNÇÃO PARA SALVAR NO FIREBASE
+    // 1. FUNÇÃO AGENDAR (Salva no Firebase + WhatsApp)
     btnAgendar.onclick = async () => {
-        const cliente = document.getElementById('cliente').value;
-        const servico = document.getElementById('servico').value;
-        const dataHora = document.getElementById('dataHora').value;
+        const nome = document.getElementById("nome").value;
+        const telefone = document.getElementById("telefone").value;
+        const data = document.getElementById("data").value;
+        const hora = document.getElementById("hora").value;
 
-        if(cliente && dataHora) {
-            try {
-                await addDoc(agendamentosRef, {
-                    cliente: cliente,
-                    servico: servico,
-                    dataHora: dataHora,
-                    timestamp: new Date()
-                });
-                alert("Agendamento salvo na nuvem!");
-                document.getElementById('cliente').value = '';
-            } catch (e) {
-                console.error("Erro ao salvar: ", e);
-            }
-        } else {
+        if (!nome || !telefone || !data || !hora) {
             alert("Preencha todos os campos!");
+            return;
+        }
+
+        try {
+            await addDoc(agendamentosRef, {
+                nome,
+                telefone,
+                data,
+                hora,
+                timestamp: new Date()
+            });
+
+            // Lógica do WhatsApp que você já usava
+            const mensagem = `Olá ${nome}, seu horário está confirmado para o dia ${data} às ${hora}.`;
+            window.open(`https://wa.me/55${telefone}?text=${encodeURIComponent(mensagem)}`, "_blank");
+
+            // Limpar campos
+            document.getElementById("nome").value = "";
+            document.getElementById("telefone").value = "";
+        } catch (e) {
+            alert("Erro ao salvar: " + e);
         }
     };
 
-    // FUNÇÃO PARA LER DO FIREBASE EM TEMPO REAL
-    const q = query(agendamentosRef, orderBy("dataHora", "asc"));
-    onSnapshot(q, (snapshot) => {
-        lista.innerHTML = '<h3>Próximos Horários</h3>';
-        snapshot.forEach((docSnap) => {
-            const ag = docSnap.data();
-            const id = docSnap.id;
-            
-            // Formatar data para leitura humana
-            const dataFormatada = new Date(ag.dataHora).toLocaleString('pt-BR');
+    // 2. FUNÇÃO LISTAR (Em tempo real)
+    // Mostra os agendamentos sempre que a data mudar
+    inputData.onchange = () => {
+        const dataSelecionada = inputData.value;
+        
+        // Busca no Firebase filtrando pela data
+        const q = query(agendamentosRef, where("data", "==", dataSelecionada), orderBy("hora", "asc"));
 
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.innerHTML = `
-                <p><strong>${ag.cliente}</strong> - ${ag.servico}</p>
-                <p>📅 ${dataFormatada}</p>
-                <span class="btn-delete" onclick="window.excluirAgendamento('${id}')">Excluir</span>
-            `;
-            lista.appendChild(card);
+        onSnapshot(q, (snapshot) => {
+            listaDiv.innerHTML = "";
+            snapshot.forEach((docSnap) => {
+                const ag = docSnap.data();
+                const id = docSnap.id;
+
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <span><strong>${ag.hora}</strong> - ${ag.nome}</span>
+                    <button onclick="window.excluirAgendamento('${id}')">Excluir</button>
+                `;
+                listaDiv.appendChild(card);
+            });
         });
-    });
+    };
 
-    // Função para excluir (disponível globalmente)
+    // 3. FUNÇÃO EXCLUIR (Global)
     window.excluirAgendamento = async (id) => {
-        if(confirm("Deseja desmarcar este horário?")) {
+        if(confirm("Deseja realmente excluir este agendamento?")) {
             await deleteDoc(doc(db, "agendamentos", id));
         }
     };
+
 </script>
 
 </body>
