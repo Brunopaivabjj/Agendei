@@ -5,24 +5,31 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Agendei</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 :root{
---primary:#b993d6;
---secondary:#8ca6db;
---bg:#f5f7fa;
+--primary:#c084fc;
+--secondary:#a5b4fc;
+--bg:#f8fafc;
 --card:#ffffff;
---text:#1e1e1e;
+--text:#1e293b;
+--border:#e2e8f0;
 }
 
 .dark{
---bg:#111827;
---card:#1f2937;
---text:#f3f4f6;
+--bg:#0f172a;
+--card:#1e293b;
+--text:#f1f5f9;
+--border:#334155;
 }
 
-*{margin:0;padding:0;box-sizing:border-box;font-family:Inter;}
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Inter;
+}
 
 body{
 background:var(--bg);
@@ -31,8 +38,10 @@ display:flex;
 min-height:100vh;
 }
 
+/* SIDEBAR */
+
 .sidebar{
-width:240px;
+width:250px;
 background:linear-gradient(180deg,var(--primary),var(--secondary));
 padding:30px 20px;
 color:white;
@@ -41,7 +50,7 @@ flex-direction:column;
 }
 
 .logo{
-font-size:24px;
+font-size:22px;
 font-weight:700;
 margin-bottom:40px;
 }
@@ -50,165 +59,172 @@ margin-bottom:40px;
 background:none;
 border:none;
 color:white;
+padding:12px 10px;
 text-align:left;
-padding:12px 0;
 cursor:pointer;
-font-size:14px;
+border-radius:8px;
+transition:0.2s;
 }
+
+.nav-btn:hover{
+background:rgba(255,255,255,0.15);
+}
+
+/* MAIN */
 
 .main{
 flex:1;
 padding:40px;
+max-width:1200px;
+margin:auto;
 }
 
-.card{
-background:var(--card);
-padding:25px;
-border-radius:16px;
-box-shadow:0 10px 30px rgba(0,0,0,0.05);
-margin-bottom:25px;
-}
-
-input,select{
-width:100%;
-padding:12px;
-margin-top:10px;
-border-radius:8px;
-border:1px solid #ddd;
-}
-
-button{
-margin-top:10px;
-padding:12px;
-border:none;
-border-radius:8px;
-cursor:pointer;
-background:linear-gradient(90deg,var(--primary),var(--secondary));
-color:white;
-font-weight:600;
-}
-
-.hidden{display:none;}
-
-.topbar{
+.header{
 display:flex;
 justify-content:space-between;
 align-items:center;
 margin-bottom:30px;
 }
 
-.agendamento-item{
-padding:10px;
-border-bottom:1px solid #eee;
-font-size:14px;
+.card{
+background:var(--card);
+border:1px solid var(--border);
+padding:25px;
+border-radius:16px;
+box-shadow:0 5px 20px rgba(0,0,0,0.05);
+margin-bottom:20px;
 }
 
-.toggle-dark{
+.button{
+background:linear-gradient(90deg,var(--primary),var(--secondary));
+color:white;
+border:none;
+padding:10px 16px;
+border-radius:8px;
 cursor:pointer;
+font-weight:500;
+}
+
+input,select{
+width:100%;
+padding:10px;
+border-radius:8px;
+border:1px solid var(--border);
+margin-top:10px;
+}
+
+/* MODAL */
+
+.modal{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.4);
+display:flex;
+justify-content:center;
+align-items:center;
+visibility:hidden;
+opacity:0;
+transition:0.3s;
+}
+
+.modal.active{
+visibility:visible;
+opacity:1;
+}
+
+.modal-content{
+background:var(--card);
+padding:30px;
+border-radius:16px;
+width:95%;
+max-width:400px;
+}
+
+/* RESPONSIVO */
+
+@media(max-width:900px){
+.sidebar{
+position:fixed;
+height:100%;
+left:-260px;
+transition:0.3s;
+}
+
+.sidebar.active{
+left:0;
+}
+
+.main{
+padding:20px;
+}
 }
 </style>
 </head>
 
 <body>
 
-<div id="loginScreen" style="margin:auto;max-width:400px;width:100%;">
+<!-- LOGIN -->
+<div id="loginScreen" style="margin:auto;width:100%;max-width:400px;">
 <div class="card">
 <h2 style="text-align:center;margin-bottom:20px;">Agendei</h2>
 <input id="email" placeholder="Email">
 <input id="senha" type="password" placeholder="Senha">
-<button onclick="login()">Entrar</button>
+<button class="button" onclick="login()">Entrar</button>
 </div>
 </div>
 
-<div id="app" class="hidden">
+<!-- APP -->
+<div id="appScreen" style="display:none;width:100%;">
 
-<div class="sidebar">
+<div class="sidebar" id="sidebar">
 <div class="logo">Agendei</div>
 <button class="nav-btn" onclick="showTab('agendar')">Agendar</button>
-<button class="nav-btn" onclick="showTab('agendei')">Agendei</button>
+<button class="nav-btn" onclick="showTab('agendei')">Agendamentos</button>
 <button class="nav-btn" onclick="showTab('config')">Configurações</button>
-<button class="nav-btn toggle-dark" onclick="toggleDark()">Modo Escuro</button>
+<button class="nav-btn" onclick="toggleDark()">Modo Escuro</button>
 <button class="nav-btn" onclick="logout()">Sair</button>
 </div>
 
 <div class="main">
 
-<div class="topbar">
-<h2 id="tituloAba">Agendar</h2>
+<div class="header">
+<h2 id="titulo">Agendar</h2>
+<button class="button" onclick="openModal()">Novo</button>
 </div>
 
-<div id="agendar" class="tab">
-<div class="card">
-<input id="clienteNome" placeholder="Nome do Cliente">
-<select id="servicoSelect"></select>
-<select id="profissionalSelect"></select>
-<input type="date" id="dataAgendamento">
-<input type="time" id="horaAgendamento">
-<button onclick="agendar()">Confirmar Agendamento</button>
+<div id="conteudo"></div>
+
 </div>
 </div>
 
-<div id="agendei" class="tab hidden">
-<div class="card">
-<h3>Agendamentos</h3>
-<div id="listaAgendamentos"></div>
-</div>
-</div>
-
-<div id="config" class="tab hidden">
-
-<div class="card">
-<h3>Serviços</h3>
-<input id="novoServico" placeholder="Nome do serviço">
-<input id="duracaoServico" placeholder="Duração (minutos)">
-<button onclick="addServico()">Adicionar</button>
-<div id="listaServicos"></div>
-</div>
-
-<div class="card">
-<h3>Profissionais</h3>
-<input id="novoProfissional" placeholder="Nome">
-<input id="whatsProfissional" placeholder="WhatsApp">
-<button onclick="addProfissional()">Adicionar</button>
-<div id="listaProfissionais"></div>
-</div>
-
-<div class="card">
-<h3>Mensagem Cliente</h3>
-<textarea id="msgCliente" style="width:100%;height:80px;"></textarea>
-</div>
-
-<div class="card">
-<h3>Mensagem Profissional</h3>
-<textarea id="msgProfissional" style="width:100%;height:80px;"></textarea>
-</div>
-
-</div>
-
-</div>
+<!-- MODAL -->
+<div class="modal" id="modal">
+<div class="modal-content" id="modalContent"></div>
 </div>
 
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAxyovmqjNYIzOYYDZZnduquiJQeK4UIgc",
-  authDomain: "agendei-d721e.firebaseapp.com",
-  projectId: "agendei-d721e",
-  storageBucket: "agendei-d721e.firebasestorage.app",
-  messagingSenderId: "525023801595",
-  appId: "1:525023801595:web:71a6d72e986e6e9e30005e",
-  measurementId: "G-YQP41N6MJ3"
+apiKey: "SUA_API",
+authDomain: "SEU_AUTH",
+projectId: "SEU_PROJECT",
+storageBucket: "SEU_STORAGE",
+messagingSenderId: "SEU_MSG",
+appId: "SEU_APP"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db = getFirestore(app);
+
 const loginScreen = document.getElementById("loginScreen");
-const appScreen = document.getElementById("app");
-  
+const appScreen = document.getElementById("appScreen");
+
 window.login = async function(){
 await signInWithEmailAndPassword(auth,email.value,senha.value);
 }
@@ -219,103 +235,44 @@ signOut(auth);
 
 onAuthStateChanged(auth,(user)=>{
 if(user){
-loginScreen.classList.add("hidden");
-appScreen.classList.remove("hidden");
-loadData();
+loginScreen.style.display="none";
+appScreen.style.display="flex";
+showTab("agendar");
 }else{
-loginScreen.classList.remove("hidden");
-appScreen.classList.add("hidden");
+loginScreen.style.display="block";
+appScreen.style.display="none";
 }
 });
 
 window.showTab=function(tab){
-document.querySelectorAll(".tab").forEach(t=>t.classList.add("hidden"));
-document.getElementById(tab).classList.remove("hidden");
-tituloAba.innerText=tab.charAt(0).toUpperCase()+tab.slice(1);
+document.getElementById("titulo").innerText =
+tab==="agendar"?"Agendar":
+tab==="agendei"?"Agendamentos":
+"Configurações";
+
+document.getElementById("conteudo").innerHTML=
+`<div class="card">Conteúdo da aba ${tab} organizado aqui.</div>`;
+}
+
+window.openModal=function(){
+document.getElementById("modalContent").innerHTML=
+`<h3 style="margin-bottom:15px;">Nova Ação</h3>
+<input placeholder="Exemplo">
+<button class="button">Salvar</button>`;
+document.getElementById("modal").classList.add("active");
 }
 
 window.toggleDark=function(){
 document.body.classList.toggle("dark");
 }
 
-async function loadData(){
-loadServicos();
-loadProfissionais();
-loadAgendamentos();
+document.getElementById("modal").addEventListener("click",e=>{
+if(e.target.id==="modal"){
+e.target.classList.remove("active");
 }
-
-async function addServico(){
-await addDoc(collection(db,"servicos"),{
-nome:novoServico.value,
-duracao:duracaoServico.value
 });
-novoServico.value="";
-duracaoServico.value="";
-loadServicos();
-}
 
-async function loadServicos(){
-servicoSelect.innerHTML="";
-listaServicos.innerHTML="";
-const query=await getDocs(collection(db,"servicos"));
-query.forEach(doc=>{
-let data=doc.data();
-servicoSelect.innerHTML+=`<option>${data.nome}</option>`;
-listaServicos.innerHTML+=`<div>${data.nome} (${data.duracao}min)</div>`;
-});
-}
-
-async function addProfissional(){
-await addDoc(collection(db,"profissionais"),{
-nome:novoProfissional.value,
-whatsapp:whatsProfissional.value
-});
-novoProfissional.value="";
-whatsProfissional.value="";
-loadProfissionais();
-}
-
-async function loadProfissionais(){
-profissionalSelect.innerHTML="";
-listaProfissionais.innerHTML="";
-const query=await getDocs(collection(db,"profissionais"));
-query.forEach(doc=>{
-let data=doc.data();
-profissionalSelect.innerHTML+=`<option>${data.nome}</option>`;
-listaProfissionais.innerHTML+=`<div>${data.nome} - ${data.whatsapp}</div>`;
-});
-}
-
-async function agendar(){
-await addDoc(collection(db,"agendamentos"),{
-cliente:clienteNome.value,
-servico:servicoSelect.value,
-profissional:profissionalSelect.value,
-data:dataAgendamento.value,
-hora:horaAgendamento.value
-});
-clienteNome.value="";
-loadAgendamentos();
-}
-
-async function loadAgendamentos(){
-listaAgendamentos.innerHTML="";
-const query=await getDocs(collection(db,"agendamentos"));
-query.forEach(doc=>{
-let d=doc.data();
-listaAgendamentos.innerHTML+=`
-<div class="agendamento-item">
-<strong>${d.data} ${d.hora}</strong><br>
-Cliente: ${d.cliente}<br>
-Serviço: ${d.servico}<br>
-Profissional: ${d.profissional}
-</div>
-`;
-});
-}
 </script>
 
 </body>
 </html>
-
-
