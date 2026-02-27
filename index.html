@@ -4,230 +4,313 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Agendei</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
+:root{
+--primary:#b993d6;
+--secondary:#8ca6db;
+--bg:#f5f7fa;
+--card:#ffffff;
+--text:#1e1e1e;
 }
+
+.dark{
+--bg:#111827;
+--card:#1f2937;
+--text:#f3f4f6;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter;}
 
 body{
-  font-family:'Inter',sans-serif;
-  background:linear-gradient(135deg,#fdfbfb,#ebedee);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  min-height:100vh;
+background:var(--bg);
+color:var(--text);
+display:flex;
+min-height:100vh;
 }
 
-/* === CONTAINER LOGIN === */
-
-.container{
-  width:100%;
-  max-width:420px;
-  background:#ffffff;
-  padding:40px;
-  border-radius:20px;
-  box-shadow:0 20px 40px rgba(0,0,0,0.08);
+.sidebar{
+width:240px;
+background:linear-gradient(180deg,var(--primary),var(--secondary));
+padding:30px 20px;
+color:white;
+display:flex;
+flex-direction:column;
 }
 
 .logo{
-  text-align:center;
-  font-size:28px;
-  font-weight:700;
-  margin-bottom:25px;
-  background:linear-gradient(90deg,#b993d6,#8ca6db);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
+font-size:24px;
+font-weight:700;
+margin-bottom:40px;
 }
 
-input{
-  width:100%;
-  padding:14px;
-  margin-top:12px;
-  border-radius:10px;
-  border:1px solid #e0e0e0;
-  font-size:14px;
+.nav-btn{
+background:none;
+border:none;
+color:white;
+text-align:left;
+padding:12px 0;
+cursor:pointer;
+font-size:14px;
 }
 
-input:focus{
-  outline:none;
-  border-color:#b993d6;
-}
-
-button{
-  width:100%;
-  padding:14px;
-  margin-top:15px;
-  border-radius:10px;
-  border:none;
-  background:linear-gradient(90deg,#b993d6,#8ca6db);
-  color:white;
-  font-weight:600;
-  cursor:pointer;
-  transition:0.3s;
-}
-
-button:hover{
-  opacity:0.9;
-}
-
-.hidden{
-  display:none;
-}
-
-/* === DASHBOARD === */
-
-.dashboard{
-  width:100%;
-  max-width:1100px;
-  padding:40px;
-}
-
-.topbar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:30px;
+.main{
+flex:1;
+padding:40px;
 }
 
 .card{
-  background:white;
-  padding:25px;
-  border-radius:16px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.05);
-  margin-bottom:25px;
+background:var(--card);
+padding:25px;
+border-radius:16px;
+box-shadow:0 10px 30px rgba(0,0,0,0.05);
+margin-bottom:25px;
 }
 
-h2,h3{
-  margin-bottom:15px;
+input,select{
+width:100%;
+padding:12px;
+margin-top:10px;
+border-radius:8px;
+border:1px solid #ddd;
 }
 
-#listaServicos p{
-  padding:8px 0;
-  border-bottom:1px solid #f1f1f1;
-  font-size:14px;
+button{
+margin-top:10px;
+padding:12px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+background:linear-gradient(90deg,var(--primary),var(--secondary));
+color:white;
+font-weight:600;
+}
+
+.hidden{display:none;}
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:30px;
+}
+
+.agendamento-item{
+padding:10px;
+border-bottom:1px solid #eee;
+font-size:14px;
+}
+
+.toggle-dark{
+cursor:pointer;
 }
 </style>
 </head>
+
 <body>
 
-<div class="logo">Agendei</div>
-<h2>Bem-vindo</h2>
-<input type="email" id="email" placeholder="Email">
-<input type="password" id="senha" placeholder="Senha">
+<div id="loginScreen" style="margin:auto;max-width:400px;width:100%;">
+<div class="card">
+<h2 style="text-align:center;margin-bottom:20px;">Agendei</h2>
+<input id="email" placeholder="Email">
+<input id="senha" type="password" placeholder="Senha">
 <button onclick="login()">Entrar</button>
-<button onclick="registrar()">Criar Conta</button>
+</div>
 </div>
 
-<div class="dashboard hidden" id="dashboard">
+<div id="app" class="hidden">
+
+<div class="sidebar">
+<div class="logo">Agendei</div>
+<button class="nav-btn" onclick="showTab('agendar')">Agendar</button>
+<button class="nav-btn" onclick="showTab('agendei')">Agendei</button>
+<button class="nav-btn" onclick="showTab('config')">Configurações</button>
+<button class="nav-btn toggle-dark" onclick="toggleDark()">Modo Escuro</button>
+<button class="nav-btn" onclick="logout()">Sair</button>
+</div>
+
+<div class="main">
+
 <div class="topbar">
-<h2>Painel</h2>
-<button onclick="logout()">Sair</button>
+<h2 id="tituloAba">Agendar</h2>
 </div>
 
+<div id="agendar" class="tab">
 <div class="card">
-<h3>Novo Serviço</h3>
-<input type="text" id="servicoNome" placeholder="Nome do serviço">
-<input type="number" id="servicoValor" placeholder="Valor">
-<input type="number" id="servicoDuracao" placeholder="Duração (minutos)">
-<button onclick="addServico()">Salvar Serviço</button>
+<input id="clienteNome" placeholder="Nome do Cliente">
+<select id="servicoSelect"></select>
+<select id="profissionalSelect"></select>
+<input type="date" id="dataAgendamento">
+<input type="time" id="horaAgendamento">
+<button onclick="agendar()">Confirmar Agendamento</button>
+</div>
 </div>
 
+<div id="agendei" class="tab hidden">
 <div class="card">
-<h3>Serviços Cadastrados</h3>
+<h3>Agendamentos</h3>
+<div id="listaAgendamentos"></div>
+</div>
+</div>
+
+<div id="config" class="tab hidden">
+
+<div class="card">
+<h3>Serviços</h3>
+<input id="novoServico" placeholder="Nome do serviço">
+<input id="duracaoServico" placeholder="Duração (minutos)">
+<button onclick="addServico()">Adicionar</button>
 <div id="listaServicos"></div>
 </div>
 
+<div class="card">
+<h3>Profissionais</h3>
+<input id="novoProfissional" placeholder="Nome">
+<input id="whatsProfissional" placeholder="WhatsApp">
+<button onclick="addProfissional()">Adicionar</button>
+<div id="listaProfissionais"></div>
+</div>
+
+<div class="card">
+<h3>Mensagem Cliente</h3>
+<textarea id="msgCliente" style="width:100%;height:80px;"></textarea>
+</div>
+
+<div class="card">
+<h3>Mensagem Profissional</h3>
+<textarea id="msgProfissional" style="width:100%;height:80px;"></textarea>
+</div>
+
+</div>
+
+</div>
 </div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAxyovmqjNYIzOYYDZZnduquiJQeK4UIgc",
-  authDomain: "agendei-d721e.firebaseapp.com",
-  projectId: "agendei-d721e",
-  storageBucket: "agendei-d721e.firebasestorage.app",
-  messagingSenderId: "525023801595",
-  appId: "1:525023801595:web:71a6d72e986e6e9e30005e",
-  measurementId: "G-YQP41N6MJ3"
+apiKey: "SUA_API",
+authDomain: "SEU_AUTH",
+projectId: "SEU_PROJECT",
+storageBucket: "SEU_STORAGE",
+messagingSenderId: "SEU_MSG",
+appId: "SEU_APP"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-window.registrar = async function(){
-let email = document.getElementById("email").value;
-let senha = document.getElementById("senha").value;
-try{
-await createUserWithEmailAndPassword(auth,email,senha);
-alert("Conta criada!");
-}catch(e){alert(e.message);}
-}
-
 window.login = async function(){
-let email = document.getElementById("email").value;
-let senha = document.getElementById("senha").value;
-try{
-await signInWithEmailAndPassword(auth,email,senha);
-}catch(e){alert(e.message);}
+await signInWithEmailAndPassword(auth,email.value,senha.value);
 }
 
-window.logout = async function(){
-await signOut(auth);
+window.logout = function(){
+signOut(auth);
 }
 
-onAuthStateChanged(auth, user=>{
+onAuthStateChanged(auth,(user)=>{
 if(user){
-document.getElementById("loginBox").classList.add("hidden");
-document.getElementById("dashboard").classList.remove("hidden");
-carregarServicos(user.uid);
+loginScreen.classList.add("hidden");
+app.classList.remove("hidden");
+loadData();
 }else{
-document.getElementById("loginBox").classList.remove("hidden");
-document.getElementById("dashboard").classList.add("hidden");
+loginScreen.classList.remove("hidden");
+app.classList.add("hidden");
 }
 });
 
-window.addServico = async function(){
-let user = auth.currentUser;
-if(!user) return;
+window.showTab=function(tab){
+document.querySelectorAll(".tab").forEach(t=>t.classList.add("hidden"));
+document.getElementById(tab).classList.remove("hidden");
+tituloAba.innerText=tab.charAt(0).toUpperCase()+tab.slice(1);
+}
 
-let nome = document.getElementById("servicoNome").value;
-let valor = document.getElementById("servicoValor").value;
-let duracao = document.getElementById("servicoDuracao").value;
+window.toggleDark=function(){
+document.body.classList.toggle("dark");
+}
 
-if(!nome||!valor||!duracao) return alert("Preencha tudo");
+async function loadData(){
+loadServicos();
+loadProfissionais();
+loadAgendamentos();
+}
 
+async function addServico(){
 await addDoc(collection(db,"servicos"),{
-uid:user.uid,
-nome,
-valor,
-duracao
+nome:novoServico.value,
+duracao:duracaoServico.value
 });
-
-carregarServicos(user.uid);
+novoServico.value="";
+duracaoServico.value="";
+loadServicos();
 }
 
-async function carregarServicos(uid){
-const q = query(collection(db,"servicos"), where("uid","==",uid));
-const querySnapshot = await getDocs(q);
+async function loadServicos(){
+servicoSelect.innerHTML="";
+listaServicos.innerHTML="";
+const query=await getDocs(collection(db,"servicos"));
+query.forEach(doc=>{
+let data=doc.data();
+servicoSelect.innerHTML+=`<option>${data.nome}</option>`;
+listaServicos.innerHTML+=`<div>${data.nome} (${data.duracao}min)</div>`;
+});
+}
 
-let lista = document.getElementById("listaServicos");
-lista.innerHTML="";
+async function addProfissional(){
+await addDoc(collection(db,"profissionais"),{
+nome:novoProfissional.value,
+whatsapp:whatsProfissional.value
+});
+novoProfissional.value="";
+whatsProfissional.value="";
+loadProfissionais();
+}
 
-querySnapshot.forEach(doc=>{
-let s = doc.data();
-lista.innerHTML += `<p>${s.nome} - R$ ${s.valor} (${s.duracao} min)</p>`;
+async function loadProfissionais(){
+profissionalSelect.innerHTML="";
+listaProfissionais.innerHTML="";
+const query=await getDocs(collection(db,"profissionais"));
+query.forEach(doc=>{
+let data=doc.data();
+profissionalSelect.innerHTML+=`<option>${data.nome}</option>`;
+listaProfissionais.innerHTML+=`<div>${data.nome} - ${data.whatsapp}</div>`;
+});
+}
+
+async function agendar(){
+await addDoc(collection(db,"agendamentos"),{
+cliente:clienteNome.value,
+servico:servicoSelect.value,
+profissional:profissionalSelect.value,
+data:dataAgendamento.value,
+hora:horaAgendamento.value
+});
+clienteNome.value="";
+loadAgendamentos();
+}
+
+async function loadAgendamentos(){
+listaAgendamentos.innerHTML="";
+const query=await getDocs(collection(db,"agendamentos"));
+query.forEach(doc=>{
+let d=doc.data();
+listaAgendamentos.innerHTML+=`
+<div class="agendamento-item">
+<strong>${d.data} ${d.hora}</strong><br>
+Cliente: ${d.cliente}<br>
+Serviço: ${d.servico}<br>
+Profissional: ${d.profissional}
+</div>
+`;
 });
 }
 </script>
 
 </body>
 </html>
-
