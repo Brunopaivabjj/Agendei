@@ -1,158 +1,220 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Agendei</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <style>
 :root{
-  --primary:#4f46e5;
-  --bg:#f4f6f9;
-  --card:#ffffff;
-  --text:#1f2937;
+--bg:#f6f4ff;
+--card:#ffffff;
+--primary:#8b7cf6;
+--primary-soft:#e9e6ff;
+--text:#1f1f2e;
+--text-soft:#6c6c80;
+--border:#ececf4;
 }
 
 body.dark{
-  --bg:#111827;
-  --card:#1f2937;
-  --text:#f9fafb;
+--bg:#12121a;
+--card:#1c1c28;
+--primary:#9f8cff;
+--primary-soft:#2a2740;
+--text:#ffffff;
+--text-soft:#b3b3cc;
+--border:#2a2a38;
 }
 
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family: 'Inter', sans-serif;
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
 
 body{
-  background:var(--bg);
-  color:var(--text);
+background:var(--bg);
+color:var(--text);
+display:flex;
+min-height:100vh;
 }
 
-header{
-  background:var(--card);
-  padding:15px 20px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  box-shadow:0 2px 8px rgba(0,0,0,0.05);
+/* SIDEBAR */
+
+.sidebar{
+width:260px;
+background:var(--card);
+border-right:1px solid var(--border);
+padding:30px 20px;
+display:flex;
+flex-direction:column;
+justify-content:space-between;
 }
 
-h1{
-  font-size:20px;
-  font-weight:700;
-  color:var(--primary);
+.logo{
+font-size:22px;
+font-weight:700;
+color:var(--primary);
+margin-bottom:40px;
 }
 
-.container{
-  padding:20px;
-  max-width:1100px;
-  margin:auto;
+.nav button{
+width:100%;
+padding:14px;
+border:none;
+background:none;
+text-align:left;
+border-radius:12px;
+margin-bottom:10px;
+cursor:pointer;
+font-weight:500;
+color:var(--text-soft);
 }
 
-.tabs{
-  display:flex;
-  gap:10px;
-  margin-bottom:20px;
-  flex-wrap:wrap;
+.nav button.active,
+.nav button:hover{
+background:var(--primary-soft);
+color:var(--primary);
 }
 
-.tab-btn{
-  padding:10px 16px;
-  border:none;
-  background:var(--card);
-  border-radius:8px;
-  cursor:pointer;
-  font-weight:600;
-}
-
-.tab-btn.active{
-  background:var(--primary);
-  color:white;
+.main{
+flex:1;
+padding:40px;
+overflow:auto;
 }
 
 .card{
-  background:var(--card);
-  padding:20px;
-  border-radius:12px;
-  box-shadow:0 4px 12px rgba(0,0,0,0.05);
+background:var(--card);
+padding:25px;
+border-radius:18px;
+box-shadow:0 10px 25px rgba(0,0,0,0.05);
+margin-bottom:25px;
+}
+
+h2{
+margin-bottom:20px;
+font-weight:600;
 }
 
 button.primary{
-  background:var(--primary);
-  color:white;
-  border:none;
-  padding:10px 16px;
-  border-radius:8px;
-  cursor:pointer;
+background:var(--primary);
+color:white;
+border:none;
+padding:12px 18px;
+border-radius:12px;
+cursor:pointer;
+font-weight:600;
 }
 
-.list-item{
-  padding:12px;
-  border-bottom:1px solid #e5e7eb;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+button.secondary{
+background:var(--primary-soft);
+border:none;
+padding:10px 14px;
+border-radius:10px;
+cursor:pointer;
+color:var(--primary);
+font-weight:500;
+}
+
+input,select,textarea{
+width:100%;
+padding:12px;
+border-radius:10px;
+border:1px solid var(--border);
+margin-bottom:15px;
+background:var(--card);
+color:var(--text);
+}
+
+.flex{
+display:flex;
+gap:15px;
+flex-wrap:wrap;
 }
 
 .modal{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background:rgba(0,0,0,0.5);
-  display:none;
-  justify-content:center;
-  align-items:center;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.4);
+display:none;
+align-items:center;
+justify-content:center;
 }
 
 .modal-content{
-  background:var(--card);
-  padding:20px;
-  border-radius:12px;
-  width:90%;
-  max-width:400px;
+background:var(--card);
+padding:30px;
+border-radius:18px;
+width:95%;
+max-width:500px;
 }
 
-input, select{
-  width:100%;
-  padding:8px;
-  margin-bottom:10px;
-  border-radius:6px;
-  border:1px solid #ccc;
+.toggle{
+display:flex;
+align-items:center;
+gap:10px;
+cursor:pointer;
+}
+
+/* RESPONSIVO */
+
+@media(max-width:900px){
+.sidebar{
+position:fixed;
+left:-260px;
+top:0;
+height:100%;
+transition:0.3s;
+z-index:1000;
+}
+.sidebar.open{
+left:0;
+}
+.main{
+padding:20px;
+}
+.menu-toggle{
+display:block;
+margin-bottom:20px;
+}
 }
 </style>
 </head>
-
 <body>
 
-<header>
-<h1>Agendei</h1>
+<div class="sidebar" id="sidebar">
 <div>
-<button onclick="toggleDark()">🌙</button>
-</div>
-</header>
+<div class="logo">Agendei</div>
 
-<div class="container">
-
-<div class="tabs">
-<button class="tab-btn active" onclick="openTab('agendar')">Agendar</button>
-<button class="tab-btn" onclick="openTab('agendados')">Agendados</button>
-<button class="tab-btn" onclick="openTab('config')">Configurações</button>
+<div class="nav">
+<button onclick="showTab('agendar')" class="active">Agendar</button>
+<button onclick="showTab('agendados')">Agendei</button>
+<button onclick="showTab('config')">Configurações</button>
 </div>
+</div>
+
+<div>
+<button class="secondary" onclick="toggleDark()">Modo Escuro</button>
+</div>
+</div>
+
+<div class="main">
+
+<button class="secondary menu-toggle" onclick="toggleSidebar()">☰ Menu</button>
 
 <div id="agendar" class="tab">
 <div class="card">
 <h2>Novo Agendamento</h2>
-<input id="clienteNome" placeholder="Nome do cliente">
+
+<input placeholder="Nome do Cliente" id="clienteNome">
+
 <select id="servicoSelect"></select>
 <select id="profissionalSelect"></select>
-<input type="datetime-local" id="dataHora">
+
+<input type="date" id="dataAgendamento">
+<input type="time" id="horaAgendamento">
+
 <button class="primary" onclick="salvarAgendamento()">Agendar</button>
 </div>
 </div>
@@ -165,124 +227,147 @@ input, select{
 </div>
 
 <div id="config" class="tab" style="display:none;">
+
 <div class="card">
 <h2>Serviços</h2>
-<button class="primary" onclick="abrirModalServico()">Adicionar Serviço</button>
+<button class="secondary" onclick="abrirModal('modalServico')">Adicionar Serviço</button>
 <div id="listaServicos"></div>
+</div>
 
-<hr><br>
-
+<div class="card">
 <h2>Profissionais</h2>
-<button class="primary" onclick="abrirModalProfissional()">Adicionar Profissional</button>
+<button class="secondary" onclick="abrirModal('modalProfissional')">Adicionar Profissional</button>
 <div id="listaProfissionais"></div>
-
-</div>
 </div>
 
 </div>
+
+</div>
+
+<!-- MODAIS -->
 
 <div class="modal" id="modalServico">
 <div class="modal-content">
-<h3>Novo Serviço</h3>
-<input id="nomeServico" placeholder="Nome">
-<input id="duracaoServico" type="number" placeholder="Duração (minutos)">
-<button class="primary" onclick="salvarServico()">Salvar</button>
+<h2>Novo Serviço</h2>
+<input placeholder="Nome do Serviço" id="servicoNome">
+<input placeholder="Valor" id="servicoValor">
+<input placeholder="Duração (minutos)" id="servicoDuracao">
+<button class="primary" onclick="addServico()">Salvar</button>
+<button class="secondary" onclick="fecharModal()">Cancelar</button>
 </div>
 </div>
 
 <div class="modal" id="modalProfissional">
 <div class="modal-content">
-<h3>Novo Profissional</h3>
-<input id="nomeProfissional" placeholder="Nome">
-<input id="whatsappProfissional" placeholder="WhatsApp">
-<button class="primary" onclick="salvarProfissional()">Salvar</button>
+<h2>Novo Profissional</h2>
+<input placeholder="Nome" id="profNome">
+<input placeholder="WhatsApp (com DDD)" id="profWhatsapp">
+<button class="primary" onclick="addProfissional()">Salvar</button>
+<button class="secondary" onclick="fecharModal()">Cancelar</button>
 </div>
 </div>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
-
-const firebaseConfig = {
-apiKey: "AIzaSyAxyovmqjNYIzOYYDZZnduquiJQeK4UIgc",
-authDomain: "agendei-d721e.firebaseapp.com",
-projectId: "agendei-d721e",
-storageBucket: "agendei-d721e.firebasestorage.app",
-messagingSenderId: "525023801595",
-appId: "1:525023801595:web:71a6d72e986e6e9e30005e",
-measurementId: "G-YQP41N6MJ3"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-window.salvarServico = async function(){
-await addDoc(collection(db,"servicos"),{
-nome: document.getElementById("nomeServico").value,
-duracao: document.getElementById("duracaoServico").value
-});
-location.reload();
-}
-
-window.salvarProfissional = async function(){
-await addDoc(collection(db,"profissionais"),{
-nome: document.getElementById("nomeProfissional").value,
-whatsapp: document.getElementById("whatsappProfissional").value
-});
-location.reload();
-}
-
-window.salvarAgendamento = async function(){
-await addDoc(collection(db,"agendamentos"),{
-cliente: document.getElementById("clienteNome").value,
-servico: document.getElementById("servicoSelect").value,
-profissional: document.getElementById("profissionalSelect").value,
-dataHora: document.getElementById("dataHora").value
-});
-alert("Agendado com sucesso!");
-}
-
-async function carregarDados(){
-let servicos = await getDocs(collection(db,"servicos"));
-servicos.forEach(doc=>{
-document.getElementById("servicoSelect").innerHTML += `<option>${doc.data().nome}</option>`;
-document.getElementById("listaServicos").innerHTML += `<div class="list-item">${doc.data().nome} (${doc.data().duracao} min)</div>`;
-});
-
-let profs = await getDocs(collection(db,"profissionais"));
-profs.forEach(doc=>{
-document.getElementById("profissionalSelect").innerHTML += `<option>${doc.data().nome}</option>`;
-document.getElementById("listaProfissionais").innerHTML += `<div class="list-item">${doc.data().nome}</div>`;
-});
-
-let ags = await getDocs(collection(db,"agendamentos"));
-ags.forEach(doc=>{
-let a = doc.data();
-document.getElementById("listaAgendamentos").innerHTML += `<div class="list-item">${a.cliente} - ${a.servico} - ${a.profissional} - ${a.dataHora}</div>`;
-});
-}
-
-carregarDados();
-</script>
 
 <script>
-function openTab(id){
-document.querySelectorAll('.tab').forEach(t=>t.style.display='none');
-document.getElementById(id).style.display='block';
-document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-event.target.classList.add('active');
+let servicos=[]
+let profissionais=[]
+let agendamentos=[]
+
+function showTab(tab){
+document.querySelectorAll(".tab").forEach(t=>t.style.display="none")
+document.getElementById(tab).style.display="block"
+document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"))
+event.target.classList.add("active")
 }
 
-function abrirModalServico(){
-document.getElementById("modalServico").style.display="flex";
-}
-
-function abrirModalProfissional(){
-document.getElementById("modalProfissional").style.display="flex";
+function toggleSidebar(){
+document.getElementById("sidebar").classList.toggle("open")
 }
 
 function toggleDark(){
-document.body.classList.toggle("dark");
+document.body.classList.toggle("dark")
+}
+
+function abrirModal(id){
+document.getElementById(id).style.display="flex"
+}
+
+function fecharModal(){
+document.querySelectorAll(".modal").forEach(m=>m.style.display="none")
+}
+
+function addServico(){
+let nome=document.getElementById("servicoNome").value
+let valor=document.getElementById("servicoValor").value
+let duracao=document.getElementById("servicoDuracao").value
+servicos.push({nome,valor,duracao})
+renderServicos()
+fecharModal()
+}
+
+function addProfissional(){
+let nome=document.getElementById("profNome").value
+let whatsapp=document.getElementById("profWhatsapp").value
+profissionais.push({nome,whatsapp})
+renderProfissionais()
+fecharModal()
+}
+
+function renderServicos(){
+let html=""
+servicos.forEach(s=>{
+html+=`<p>${s.nome} - R$${s.valor} - ${s.duracao}min</p>`
+})
+document.getElementById("listaServicos").innerHTML=html
+
+let select=document.getElementById("servicoSelect")
+select.innerHTML=""
+servicos.forEach((s,i)=>{
+select.innerHTML+=`<option value="${i}">${s.nome}</option>`
+})
+}
+
+function renderProfissionais(){
+let html=""
+profissionais.forEach(p=>{
+html+=`<p>${p.nome} - ${p.whatsapp}</p>`
+})
+document.getElementById("listaProfissionais").innerHTML=html
+
+let select=document.getElementById("profissionalSelect")
+select.innerHTML=""
+profissionais.forEach((p,i)=>{
+select.innerHTML+=`<option value="${i}">${p.nome}</option>`
+})
+}
+
+function salvarAgendamento(){
+let cliente=document.getElementById("clienteNome").value
+let servico=servicos[document.getElementById("servicoSelect").value]
+let profissional=profissionais[document.getElementById("profissionalSelect").value]
+let data=document.getElementById("dataAgendamento").value
+let hora=document.getElementById("horaAgendamento").value
+
+agendamentos.push({cliente,servico,profissional,data,hora})
+renderAgendamentos()
+}
+
+function renderAgendamentos(){
+let html=""
+agendamentos.forEach(a=>{
+html+=`<div class="card">
+<strong>${a.cliente}</strong><br>
+${a.servico.nome} - ${a.data} ${a.hora}<br>
+Profissional: ${a.profissional.nome}
+<br><br>
+<button class="secondary" onclick="enviarWhats('${a.profissional.whatsapp}','${a.cliente}','${a.data}','${a.hora}','${a.servico.nome}')">Enviar WhatsApp</button>
+</div>`
+})
+document.getElementById("listaAgendamentos").innerHTML=html
+}
+
+function enviarWhats(numero,cliente,data,hora,servico){
+let texto=`Olá! Novo agendamento:%0ACliente: ${cliente}%0AData: ${data}%0AHora: ${hora}%0AServiço: ${servico}`
+window.open(`https://wa.me/55${numero}?text=${texto}`)
 }
 </script>
 
