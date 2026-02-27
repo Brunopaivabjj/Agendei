@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agendei Pro v3.1 - Edição Total</title>
+    <title>Agendei Pro v3.3</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root { 
@@ -14,8 +14,9 @@
         body { margin: 0; font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; transition: 0.3s; }
         .container { background: var(--card-bg); width: 100%; max-width: 500px; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); box-sizing: border-box; }
         
+        /* MODAIS */
         .modal { display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); overflow-y: auto; }
-        .modal-content { background: var(--card-bg); margin: 5% auto; padding: 25px; border-radius: 20px; width: 90%; max-width: 450px; position: relative; }
+        .modal-content { background: var(--card-bg); margin: 5% auto; padding: 25px; border-radius: 20px; width: 90%; max-width: 450px; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
         .close { position: absolute; right: 20px; top: 10px; font-size: 28px; cursor: pointer; color: var(--primary); }
 
         .nav-tabs { display: flex; justify-content: space-around; margin-bottom: 25px; border-bottom: 2px solid #eee; }
@@ -28,7 +29,7 @@
         input, select, button { width: 100%; padding: 12px; margin-top: 6px; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; font-family: inherit; }
         button { background-color: var(--primary); color: white; border: none; font-weight: 600; cursor: pointer; }
         
-        .card-perfil { background: var(--secondary); padding: 15px; border-radius: 15px; margin-bottom: 10px; border: 1px solid #7b5ea722; display: flex; justify-content: space-between; align-items: center; }
+        .card-item { background: var(--secondary); padding: 15px; border-radius: 15px; margin-bottom: 10px; border: 1px solid #7b5ea722; display: flex; justify-content: space-between; align-items: center; }
         .serv-pers-card { background: white; padding: 12px; border-radius: 10px; margin-top: 8px; border: 1px solid #eee; }
         
         .actions { display: flex; gap: 8px; }
@@ -37,7 +38,7 @@
         .btn-del { background: var(--accent); }
 
         .grid-half { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        hr { border: 0; border-top: 1px solid #eee; margin: 20px 0; }
+        hr { border: 0; border-top: 1px solid #eee; margin: 25px 0; }
     </style>
 </head>
 <body id="body">
@@ -61,7 +62,7 @@
             <input type="date" id="cli-data">
             <input type="time" id="cli-hora">
         </div>
-        <button id="btn-confirmar-ag">Confirmar</button>
+        <button id="btn-confirmar-ag">Confirmar Agendamento</button>
     </div>
 
     <div id="sec-dashboard" class="content-section">
@@ -71,32 +72,43 @@
     </div>
 
     <div id="sec-config" class="content-section">
-        <h3>Cadastrar/Editar Serviço</h3>
-        <input type="hidden" id="gs-id-edit">
-        <input type="text" id="gs-nome" placeholder="Nome do Serviço">
-        <div class="grid-half">
-            <input type="number" id="gs-tempo" placeholder="Tempo Padrão">
-            <input type="number" id="gs-preco" placeholder="Preço Padrão">
+        <div style="display:flex; gap:10px; margin-bottom: 20px;">
+            <button onclick="abrirModalServico()" style="background: #2ecc71;">+ Novo Serviço</button>
+            <button onclick="abrirModalProf()" style="background: #2ecc71;">+ Novo Profissional</button>
         </div>
-        <button id="btn-add-serv-geral" style="background: #2ecc71;">Salvar Serviço Geral</button>
-        <div id="lista-serv-gerais" style="margin-top: 15px;"></div>
+        
+        <h3>Serviços Gerais</h3>
+        <div id="lista-serv-gerais"></div>
 
         <hr>
         <h3>Equipe / Perfis</h3>
-        <input type="text" id="prof-nome-novo" placeholder="Nome da Profissional">
-        <button id="btn-add-prof-equipe">Adicionar à Equipe</button>
-        <div id="lista-perfis-equipe" style="margin-top: 15px;"></div>
+        <div id="lista-perfis-equipe"></div>
+    </div>
+</div>
+
+<div id="modal-servico" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="fecharModais()">&times;</span>
+        <h3 id="titulo-servico">Serviço Geral</h3>
+        <input type="hidden" id="gs-id-edit">
+        <label>Nome do Serviço</label>
+        <input type="text" id="gs-nome">
+        <div class="grid-half">
+            <div><label>Tempo Padrão</label><input type="number" id="gs-tempo"></div>
+            <div><label>Preço Padrão</label><input type="number" id="gs-preco"></div>
+        </div>
+        <button id="btn-salvar-serv-geral" style="margin-top: 20px;">Salvar Serviço</button>
     </div>
 </div>
 
 <div id="modal-perfil" class="modal">
     <div class="modal-content">
-        <span class="close" onclick="fecharModal()">&times;</span>
+        <span class="close" onclick="fecharModais()">&times;</span>
         <h3 id="modal-titulo-nome">Editar Perfil</h3>
         <input type="hidden" id="modal-prof-id">
         <label>Nome do Colaborador</label>
         <input type="text" id="modal-input-nome">
-        <h4 style="margin-top: 20px; color: var(--primary);">Personalizar Serviços:</h4>
+        <h4 style="margin-top: 20px; color: var(--primary);">Serviços Prestados:</h4>
         <div id="lista-servicos-personalizados"></div>
         <button id="btn-salvar-perfil-total" style="background: #2ecc71; margin-top: 20px;">Salvar Alterações</button>
     </div>
@@ -104,7 +116,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, getDoc, setDoc, updateDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, doc, deleteDoc, getDoc, updateDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyAxyovmqjNYIzOYYDZZnduquiJQeK4UIgc",
@@ -122,7 +134,7 @@
 
     let servicosCache = [];
 
-    // --- CARREGAMENTO ---
+    // --- CARREGAMENTO REAL-TIME ---
     onSnapshot(colServs, snap => {
         const lista = document.getElementById('lista-serv-gerais');
         const sel = document.getElementById('sel-serv-ag');
@@ -130,10 +142,10 @@
         servicosCache = snap.docs.map(d => ({id: d.id, ...d.data()}));
         servicosCache.forEach(s => {
             lista.innerHTML += `
-                <div class="card-perfil">
+                <div class="card-item">
                     <span>${s.nome} <br><small>R$ ${s.preco} | ${s.tempo}min</small></span>
                     <div class="actions">
-                        <button class="btn-mini btn-edit" onclick="prepararEdicaoServico('${s.id}')">✎</button>
+                        <button class="btn-mini btn-edit" onclick="abrirModalServico('${s.id}')">✎</button>
                         <button class="btn-mini btn-del" onclick="remover('servicos_gerais', '${s.id}')">X</button>
                     </div>
                 </div>`;
@@ -146,41 +158,50 @@
         lista.innerHTML = "";
         snap.forEach(d => {
             const p = d.data();
-            lista.innerHTML += `<div class="card-perfil"><span>👤 ${p.nome}</span><button class="btn-mini btn-edit" onclick="abrirPerfil('${d.id}')">Perfil / Serviços</button></div>`;
+            lista.innerHTML += `<div class="card-item"><span>👤 ${p.nome}</span><button class="btn-mini btn-edit" onclick="abrirPerfil('${d.id}')">Editar Perfil</button></div>`;
         });
     });
 
-    // --- EDIÇÃO DE SERVIÇO GERAL ---
-    window.prepararEdicaoServico = async (id) => {
-        const d = await getDoc(doc(db, "servicos_gerais", id));
-        const s = d.data();
-        document.getElementById('gs-id-edit').value = id;
-        document.getElementById('gs-nome').value = s.nome;
-        document.getElementById('gs-tempo').value = s.tempo;
-        document.getElementById('gs-preco').value = s.preco;
-        document.getElementById('btn-add-serv-geral').innerText = "Atualizar Serviço Geral";
+    // --- LOGICA MODAL SERVIÇO GERAL ---
+    window.abrirModalServico = async (id = null) => {
+        if(id) {
+            const d = await getDoc(doc(db, "servicos_gerais", id));
+            const s = d.data();
+            document.getElementById('gs-id-edit').value = id;
+            document.getElementById('gs-nome').value = s.nome;
+            document.getElementById('gs-tempo').value = s.tempo;
+            document.getElementById('gs-preco').value = s.preco;
+            document.getElementById('titulo-servico').innerText = "Editar Serviço";
+        } else {
+            document.getElementById('gs-id-edit').value = "";
+            document.getElementById('gs-nome').value = "";
+            document.getElementById('gs-tempo').value = "";
+            document.getElementById('gs-preco').value = "";
+            document.getElementById('titulo-servico').innerText = "Novo Serviço";
+        }
+        document.getElementById('modal-servico').style.display = 'block';
     };
 
-    document.getElementById('btn-add-serv-geral').onclick = async () => {
+    document.getElementById('btn-salvar-serv-geral').onclick = async () => {
         const id = document.getElementById('gs-id-edit').value;
         const dados = {
             nome: document.getElementById('gs-nome').value,
             tempo: document.getElementById('gs-tempo').value,
             preco: document.getElementById('gs-preco').value
         };
-        if(!dados.nome) return;
         if(id) await updateDoc(doc(db, "servicos_gerais", id), dados);
         else await addDoc(colServs, dados);
-        
-        // Limpar campos
-        document.getElementById('gs-id-edit').value = "";
-        document.getElementById('gs-nome').value = "";
-        document.getElementById('gs-tempo').value = "";
-        document.getElementById('gs-preco').value = "";
-        document.getElementById('btn-add-serv-geral').innerText = "Salvar Serviço Geral";
+        fecharModais();
     };
 
-    // --- EDIÇÃO DE PERFIL ---
+    // --- LOGICA MODAL PERFIL COLABORADOR ---
+    window.abrirModalProf = () => {
+        document.getElementById('modal-prof-id').value = "";
+        document.getElementById('modal-input-nome').value = "";
+        document.getElementById('lista-servicos-personalizados').innerHTML = "<p style='font-size:12px; color:gray;'>Salve o profissional primeiro para liberar a personalização de serviços.</p>";
+        document.getElementById('modal-perfil').style.display = 'block';
+    };
+
     window.abrirPerfil = async (id) => {
         const d = await getDoc(doc(db, "profissionais", id));
         const prof = d.data();
@@ -197,8 +218,8 @@
                         <input type="checkbox" id="check-${s.id}" ${exc.ativo ? 'checked' : ''}> <strong>${s.nome}</strong>
                     </div>
                     <div class="grid-half">
-                        <input type="number" id="t-${s.id}" value="${exc.tempo}" placeholder="Tempo Padrão">
-                        <input type="number" id="p-${s.id}" value="${exc.preco}" placeholder="Preço Padrão">
+                        <div><label style="font-size:10px;">Tempo (Padrão: ${s.tempo})</label><input type="number" id="t-${s.id}" value="${exc.tempo}"></div>
+                        <div><label style="font-size:10px;">Preço (Padrão: ${s.preco})</label><input type="number" id="p-${s.id}" value="${exc.preco}"></div>
                     </div>
                 </div>`;
         });
@@ -210,29 +231,21 @@
         const nome = document.getElementById('modal-input-nome').value;
         const excecoes = {};
         servicosCache.forEach(s => {
-            const ativo = document.getElementById(`check-${s.id}`).checked;
-            const t = document.getElementById(`t-${s.id}`).value;
-            const p = document.getElementById(`p-${s.id}`).value;
-            if(ativo) excecoes[s.id] = { ativo, tempo: t, preco: p };
+            const check = document.getElementById(`check-${s.id}`);
+            if(check && check.checked) {
+                excecoes[s.id] = { ativo: true, tempo: document.getElementById(`t-${s.id}`).value, preco: document.getElementById(`p-${s.id}`).value };
+            }
         });
-        await updateDoc(doc(db, "profissionais", id), { nome, excecoes });
-        fecharModal();
+        if(id) await updateDoc(doc(db, "profissionais", id), { nome, excecoes });
+        else await addDoc(colProfs, { nome, excecoes: {} });
+        fecharModais();
     };
 
-    // --- AGENDAMENTO E NAVEGAÇÃO ---
-    document.getElementById('sel-serv-ag').onchange = async (e) => {
-        const sId = e.target.value;
-        const selProf = document.getElementById('sel-prof-ag');
-        selProf.innerHTML = '<option value="">Quem atende?</option>';
-        const snap = await getDocs(colProfs);
-        snap.forEach(d => {
-            const p = d.data();
-            if(p.excecoes && p.excecoes[sId]?.ativo) selProf.innerHTML += `<option value="${d.id}">${p.nome}</option>`;
-        });
+    // --- AUXILIARES ---
+    window.fecharModais = () => {
+        document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
     };
-
-    window.fecharModal = () => document.getElementById('modal-perfil').style.display = 'none';
-    window.remover = async (c, id) => { if(confirm("Excluir?")) await deleteDoc(doc(db, c, id)); };
+    window.remover = async (c, id) => { if(confirm("Deseja excluir?")) await deleteDoc(doc(db, c, id)); };
 
     const tabs = { 'tab-agendar': 'sec-agendar', 'tab-dashboard': 'sec-dashboard', 'tab-config': 'sec-config' };
     Object.keys(tabs).forEach(t => document.getElementById(t).onclick = () => {
