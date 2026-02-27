@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agendei Pro - Gestão de Equipe</title>
+    <title>Agendei Pro - Gestão Financeira</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root { 
@@ -25,13 +25,15 @@
         .card { background: var(--secondary); padding: 12px; border-radius: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
         .btn-excluir { width: auto; background: var(--accent); font-size: 10px; padding: 5px 8px; margin: 0; }
         
-        /* AJUSTE VERTICAL PARA IPHONE */
+        /* LAYOUT VERTICAL PARA IPHONE */
         .checkbox-group { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
-        .checkbox-item { background: var(--secondary); padding: 10px; border-radius: 8px; display: flex; align-items: center; gap: 10px; font-size: 14px; }
-        .checkbox-item input { width: 20px; height: 20px; margin: 0; }
+        .checkbox-item { background: var(--secondary); padding: 12px; border-radius: 8px; display: flex; align-items: center; gap: 10px; font-size: 14px; border: 1px solid transparent; }
+        .checkbox-item input { width: 22px; height: 22px; margin: 0; cursor: pointer; }
 
         .btn-whatsapp-prof { background-color: #25d366; font-size: 12px; margin-top: 5px; }
-        hr { border: 0; border-top: 1px solid #eee; margin: 20px 0; }
+        .grid-half { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        hr { border: 0; border-top: 1px solid #eee; margin: 25px 0; }
+        .price-tag { color: #2ecc71; font-weight: 600; font-size: 0.9em; }
     </style>
 </head>
 <body id="body">
@@ -53,45 +55,43 @@
         <input type="text" id="nome">
         <label>Telefone</label>
         <input type="text" id="telefone" placeholder="DDD + Número">
-        <div style="display: flex; gap:10px;">
-            <input type="date" id="data_input">
-            <input type="time" id="hora_input">
+        <div class="grid-half">
+            <div><label>Data</label><input type="date" id="data_input"></div>
+            <div><label>Hora</label><input type="time" id="hora_input"></div>
         </div>
         <button id="btnSalvar">Confirmar Agendamento</button>
     </div>
 
     <div id="sec-dashboard" class="content-section">
-        <h2>Visualizar Agenda</h2>
-        <label>Filtrar por Profissional</label>
+        <h2>Agenda do Dia</h2>
+        <label>Filtrar Profissional</label>
         <select id="filtro-prof-agenda"></select>
-        <label>Data</label>
+        <label>Escolher Data</label>
         <input type="date" id="data-filtro-agenda">
         
         <button id="btnEnviarZapProf" class="btn-whatsapp-prof">Enviar Agenda p/ Profissional</button>
         
-        <div style="margin-top: 20px;">
-            <div id="lista_agendamentos"></div>
-        </div>
+        <div style="margin-top: 20px;" id="lista_agendamentos"></div>
     </div>
 
     <div id="sec-config" class="content-section">
-        <h2>Configurações</h2>
+        <h2>Ajustes</h2>
         <button id="btn-dark" style="background: #333;">Modo Noturno</button>
-        <label>Nome do Espaço</label>
-        <input type="text" id="nome_espaco">
-        <button id="btnSalvarNome" style="background: #4CAF50;">Salvar Nome</button>
         <hr>
         <h3>Cadastrar Serviço</h3>
-        <input type="text" id="servico-nome" placeholder="Ex: Cílios">
-        <input type="number" id="servico-tempo" placeholder="Duração (minutos)">
-        <label>Quem realiza este serviço? (Vertical)</label>
+        <input type="text" id="servico-nome" placeholder="Nome do Serviço (ex: Cílios)">
+        <div class="grid-half">
+            <input type="number" id="servico-tempo" placeholder="Tempo (minutos)">
+            <input type="number" id="servico-preco" placeholder="Valor (R$)">
+        </div>
+        <label>Quem realiza este serviço?</label>
         <div id="check-profissionais" class="checkbox-group"></div>
         <button id="btnAddServico">Salvar Serviço</button>
         <div id="lista-servicos-config" style="margin-top:10px;"></div>
+        
         <hr>
         <h3>Equipe</h3>
-        <input type="text" id="novo-profissional" placeholder="Nome">
-        <input type="text" id="zap-profissional" placeholder="WhatsApp (DDD+Número)">
+        <input type="text" id="novo-profissional" placeholder="Nome do Profissional">
         <button id="btnAddProfissional">Adicionar na Equipe</button>
         <div id="lista-profissionais-config" style="margin-top:10px;"></div>
     </div>
@@ -121,10 +121,8 @@
         const listaConfig = document.getElementById('lista-profissionais-config');
         const checkGroup = document.getElementById('check-profissionais');
         const filtroProf = document.getElementById('filtro-prof-agenda');
-        
         listaConfig.innerHTML = ""; checkGroup.innerHTML = "";
-        filtroProf.innerHTML = '<option value="">Todos os Profissionais</option>';
-
+        filtroProf.innerHTML = '<option value="">Todos</option>';
         snap.forEach(d => {
             const p = d.data();
             listaConfig.innerHTML += `<div class="card"><span>${p.nome}</span><button class="btn-excluir" onclick="apagarProf('${d.id}')">X</button></div>`;
@@ -136,56 +134,72 @@
     onSnapshot(servRef, (snap) => {
         const selectAgendar = document.getElementById('select-servico-agendar');
         const listaS = document.getElementById('lista-servicos-config');
-        selectAgendar.innerHTML = '<option value="">Escolha...</option>';
+        selectAgendar.innerHTML = '<option value="">Escolha o Serviço...</option>';
         listaS.innerHTML = "";
         snap.forEach(d => {
             const s = d.data();
-            selectAgendar.innerHTML += `<option value="${d.id}">${s.nome}</option>`;
-            listaS.innerHTML += `<div class="card"><span>${s.nome}</span><button class="btn-excluir" onclick="apagarServ('${d.id}')">X</button></div>`;
+            selectAgendar.innerHTML += `<option value="${d.id}">${s.nome} - R$ ${s.preco}</option>`;
+            listaS.innerHTML += `<div class="card"><span>${s.nome} <br><small class="price-tag">R$ ${s.preco} - ${s.tempo}min</small></span><button class="btn-excluir" onclick="apagarServ('${d.id}')">X</button></div>`;
         });
     });
 
-    // --- FILTRAR AGENDA ---
-    function carregarAgenda() {
-        const pSel = document.getElementById('filtro-prof-agenda').value;
-        const dSel = document.getElementById('data-filtro-agenda').value;
-        if(!dSel) return;
+    // --- AGENDAR ---
+    document.getElementById('btnSalvar').onclick = async () => {
+        const sId = document.getElementById('select-servico-agendar').value;
+        const prof = document.getElementById('select-profissional-agendar').value;
+        const nome = document.getElementById('nome').value;
+        const data = document.getElementById('data_input').value;
+        const hora = document.getElementById('hora_input').value;
+        const tel = document.getElementById('telefone').value;
 
-        let q = query(agendamentosRef, where("data", "==", dSel), orderBy("hora", "asc"));
-        if(pSel) q = query(agendamentosRef, where("data", "==", dSel), where("profissional", "==", pSel), orderBy("hora", "asc"));
+        if(!sId || !prof || !nome || !data || !hora) return alert("Preencha todos os campos!");
 
-        onSnapshot(q, (snap) => {
-            const lista = document.getElementById('lista_agendamentos');
-            lista.innerHTML = "";
-            snap.forEach(docSnap => {
-                const ag = docSnap.data();
-                lista.innerHTML += `<div class="card"><span><strong>${ag.hora}</strong> - ${ag.cliente}<br><small>${ag.profissional}</small></span><button class="btn-excluir" onclick="apagarAg('${docSnap.id}')">X</button></div>`;
-            });
+        // Buscar dados do serviço para salvar o preço e nome no agendamento
+        const sSnap = await getDoc(doc(db, "servicos", sId));
+        const sData = sSnap.data();
+
+        await addDoc(agendamentosRef, { 
+            profissional: prof, cliente: nome, data, hora, 
+            servicoNome: sData.nome, preco: sData.preco, telefone: tel 
         });
-    }
-    document.getElementById('filtro-prof-agenda').onchange = carregarAgenda;
-    document.getElementById('data-filtro-agenda').onchange = carregarAgenda;
+        alert("Agendado com sucesso!");
+        document.getElementById('nome').value = "";
+    };
 
-    // --- ENVIAR AGENDA PARA PROFISSIONAL ---
+    // --- ENVIAR AGENDA ZAP ---
     document.getElementById('btnEnviarZapProf').onclick = async () => {
         const pSel = document.getElementById('filtro-prof-agenda').value;
         const dSel = document.getElementById('data-filtro-agenda').value;
-        if(!pSel || !dSel) return alert("Selecione um profissional e a data primeiro!");
+        if(!pSel || !dSel) return alert("Selecione profissional e data!");
 
         const q = query(agendamentosRef, where("data", "==", dSel), where("profissional", "==", pSel), orderBy("hora", "asc"));
         const snap = await getDocs(q);
-        
-        let texto = `*Agenda do dia ${dSel} - Profissional ${pSel}*\n\n`;
+        let texto = `*Resumo da Agenda - ${pSel}*\n📅 *Data:* ${dSel}\n\n`;
         snap.forEach(d => {
             const ag = d.data();
-            texto += `⏰ ${ag.hora} - ${ag.cliente}\n`;
+            texto += `⏰ ${ag.hora} - ${ag.cliente}\n🛠️ ${ag.servicoNome} (R$ ${ag.preco})\n----------\n`;
         });
-
-        // Aqui você precisaria ter o número do profissional salvo, por enquanto simulando:
         window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, "_blank");
     };
 
-    // --- LÓGICA DE NAVEGAÇÃO E OUTRAS FUNÇÕES ---
+    // --- CADASTROS ---
+    document.getElementById('btnAddServico').onclick = async () => {
+        const nome = document.getElementById('servico-nome').value;
+        const tempo = document.getElementById('servico-tempo').value;
+        const preco = document.getElementById('servico-preco').value;
+        const selecionados = Array.from(document.querySelectorAll('input[name="prof"]:checked')).map(c => c.value);
+        if(!nome || !preco || selecionados.length === 0) return alert("Preencha nome, preço e profissionais!");
+        await addDoc(servRef, { nome, tempo, preco, profissionais: selecionados });
+        alert("Serviço salvo!");
+    };
+
+    document.getElementById('btnAddProfissional').onclick = async () => {
+        const nome = document.getElementById('novo-profissional').value;
+        if(nome) await addDoc(profRef, { nome });
+        document.getElementById('novo-profissional').value = "";
+    };
+
+    // --- NAVEGAÇÃO ---
     const tabs = { 'tab-agendar': 'sec-agendar', 'tab-dashboard': 'sec-dashboard', 'tab-config': 'sec-config' };
     Object.keys(tabs).forEach(t => document.getElementById(t).onclick = (e) => {
         document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
@@ -194,21 +208,11 @@
         e.target.classList.add('active');
     });
 
-    document.getElementById('btnSalvar').onclick = async () => {
-        const sId = document.getElementById('select-servico-agendar').value;
-        const prof = document.getElementById('select-profissional-agendar').value;
-        const nome = document.getElementById('nome').value;
-        const data = document.getElementById('data_input').value;
-        const hora = document.getElementById('hora_input').value;
-        if(!sId || !prof || !nome || !data || !hora) return alert("Preencha tudo!");
-        await addDoc(agendamentosRef, { profissional: prof, cliente: nome, data, hora, servicoId: sId });
-        alert("Agendado com sucesso!");
-    };
-
+    // ... Outras funções de exclusão e modo noturno permanecem iguais ...
     window.apagarProf = async (id) => await deleteDoc(doc(db, "profissionais", id));
     window.apagarServ = async (id) => await deleteDoc(doc(db, "servicos", id));
     window.apagarAg = async (id) => await deleteDoc(doc(db, "agendamentos", id));
-
+    document.getElementById('btn-dark').onclick = () => document.getElementById('body').classList.toggle('dark-mode');
 </script>
 </body>
 </html>
