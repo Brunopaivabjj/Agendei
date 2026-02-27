@@ -4,230 +4,217 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Agenda Fácil Pro</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-<link rel="manifest" href="manifest.json">
-
 <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:#f4f6fb;display:flex;}
+.sidebar{
+width:220px;
+background:linear-gradient(180deg,#b993d6,#8ca6db);
+color:white;
+padding:30px 20px;
+height:100vh;
+}
+.sidebar h2{margin-bottom:30px;}
+.sidebar button{
+background:none;border:none;color:white;
+display:block;margin-bottom:15px;
+cursor:pointer;font-weight:500;
 }
 
-body {
-    font-family: 'Inter', sans-serif;
-    background: #f6f7fb;
-    display: flex;
-    height: 100vh;
+.main{flex:1;padding:30px;overflow:auto;}
+
+.card{
+background:white;
+padding:20px;
+border-radius:15px;
+box-shadow:0 10px 20px rgba(0,0,0,0.05);
+margin-bottom:20px;
 }
 
-/* Sidebar */
-
-.sidebar {
-    width: 240px;
-    background: linear-gradient(180deg, #b993d6, #8ca6db);
-    padding: 30px 20px;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+input,select,button{
+width:100%;padding:10px;margin-top:10px;
+border-radius:8px;border:1px solid #ddd;
 }
 
-.sidebar h2 {
-    font-weight: 700;
-    margin-bottom: 40px;
+button{
+background:linear-gradient(90deg,#b993d6,#8ca6db);
+color:white;border:none;font-weight:600;cursor:pointer;
 }
 
-.sidebar a {
-    text-decoration: none;
-    color: white;
-    margin-bottom: 20px;
-    font-weight: 500;
-    display: block;
-    opacity: 0.9;
+.servico-item{
+display:flex;justify-content:space-between;
+background:#f3f4f8;padding:8px;border-radius:8px;margin-top:5px;
 }
 
-.sidebar a:hover {
-    opacity: 1;
-}
+.hidden{display:none;}
 
-/* Main */
-
-.main {
-    flex: 1;
-    padding: 40px;
-    overflow-y: auto;
-}
-
-.header {
-    font-size: 24px;
-    font-weight: 700;
-    margin-bottom: 30px;
-}
-
-.card {
-    background: white;
-    padding: 25px;
-    border-radius: 16px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-    margin-bottom: 25px;
-}
-
-input, button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 10px;
-    border-radius: 10px;
-    border: 1px solid #ddd;
-    font-size: 14px;
-}
-
-button {
-    background: linear-gradient(90deg, #b993d6, #8ca6db);
-    color: white;
-    font-weight: 600;
-    border: none;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-button:hover {
-    opacity: 0.9;
-}
-
-.agendamento-item {
-    padding: 12px;
-    background: #f3f4f8;
-    border-radius: 10px;
-    margin-top: 10px;
-    display: flex;
-    justify-content: space-between;
-}
-
-.total-box {
-    font-size: 18px;
-    font-weight: 600;
-    margin-top: 15px;
-}
-
-@media(max-width: 768px){
-    .sidebar {
-        display: none;
-    }
-    body {
-        flex-direction: column;
-    }
+.agendamento-item{
+display:flex;justify-content:space-between;
+background:#f3f4f8;padding:8px;border-radius:8px;margin-top:5px;
 }
 </style>
 </head>
-
 <body>
 
 <div class="sidebar">
-    <div>
-        <h2>Agenda Fácil</h2>
-        <a href="#">Dashboard</a>
-        <a href="#">Agenda</a>
-        <a href="#">Financeiro</a>
-    </div>
-    <div>
-        <small>Versão Beta</small>
-    </div>
+<h2>Agenda Fácil</h2>
+<button onclick="mostrar('agenda')">Agenda</button>
+<button onclick="mostrar('config')">Configurações</button>
 </div>
 
 <div class="main">
 
-<div class="header">
-    Painel de Controle
+<div id="agenda">
+
+<div class="card">
+<h3>Novo Agendamento</h3>
+
+<input type="text" id="nome" placeholder="Nome do Cliente">
+<input type="text" id="telefone" placeholder="Telefone">
+
+<select id="servico"></select>
+
+<input type="date" id="data">
+<input type="time" id="hora">
+
+<button onclick="agendar()">Confirmar</button>
 </div>
 
 <div class="card">
-    <h3>Novo Agendamento</h3>
+<h3>Agenda do Dia</h3>
+<div id="lista"></div>
+<div id="total"></div>
+</div>
 
-    <input type="text" id="nome" placeholder="Nome do Cliente">
-    <input type="text" id="telefone" placeholder="Telefone">
-    <input type="date" id="data">
-    <input type="time" id="hora">
-    <input type="number" id="valor" placeholder="Valor do Serviço">
+</div>
 
-    <button onclick="agendar()">Confirmar Agendamento</button>
+<div id="config" class="hidden">
+
+<div class="card">
+<h3>Adicionar Serviço</h3>
+<input type="text" id="novoServico" placeholder="Nome do Serviço">
+<input type="number" id="novoValor" placeholder="Valor">
+<button onclick="addServico()">Salvar Serviço</button>
 </div>
 
 <div class="card">
-    <h3>Agenda do Dia</h3>
-    <div id="lista"></div>
-    <div class="total-box" id="total"></div>
+<h3>Serviços Cadastrados</h3>
+<div id="listaServicos"></div>
+</div>
+
+<div class="card">
+<h3>Horário de Funcionamento</h3>
+<input type="time" id="inicio">
+<input type="time" id="fim">
+<button onclick="salvarHorario()">Salvar Horário</button>
+</div>
+
 </div>
 
 </div>
 
 <script>
 
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js');
+function mostrar(secao){
+document.getElementById('agenda').classList.add('hidden');
+document.getElementById('config').classList.add('hidden');
+document.getElementById(secao).classList.remove('hidden');
 }
 
-function carregar() {
-    const dataHoje = document.getElementById("data").value;
-    const lista = document.getElementById("lista");
-    const totalBox = document.getElementById("total");
+function carregarServicos(){
+let servicos = JSON.parse(localStorage.getItem("servicos"))||[];
+let select = document.getElementById("servico");
+let lista = document.getElementById("listaServicos");
 
-    lista.innerHTML = "";
-    let total = 0;
+select.innerHTML="";
+lista.innerHTML="";
 
-    let agendamentos = JSON.parse(localStorage.getItem("agendamentos")) || [];
-
-    let filtrados = agendamentos.filter(a => a.data === dataHoje);
-
-    filtrados.sort((a,b)=> a.hora.localeCompare(b.hora));
-
-    filtrados.forEach((ag, index) => {
-        total += Number(ag.valor);
-
-        lista.innerHTML += `
-            <div class="agendamento-item">
-                ${ag.hora} - ${ag.nome}
-                <strong>R$ ${ag.valor}</strong>
-            </div>
-        `;
-    });
-
-    totalBox.innerHTML = "Total do Dia: R$ " + total.toFixed(2);
+servicos.forEach((s,i)=>{
+select.innerHTML+=`<option value="${i}">${s.nome} - R$ ${s.valor}</option>`;
+lista.innerHTML+=`
+<div class="servico-item">
+${s.nome} - R$ ${s.valor}
+<button onclick="removerServico(${i})">X</button>
+</div>`;
+});
 }
 
-function agendar() {
-    const nome = document.getElementById("nome").value;
-    const telefone = document.getElementById("telefone").value;
-    const data = document.getElementById("data").value;
-    const hora = document.getElementById("hora").value;
-    const valor = document.getElementById("valor").value;
+function addServico(){
+let nome=document.getElementById("novoServico").value;
+let valor=document.getElementById("novoValor").value;
+if(!nome||!valor)return alert("Preencha tudo");
 
-    if(!nome || !telefone || !data || !hora || !valor){
-        alert("Preencha todos os campos");
-        return;
-    }
-
-    let agendamentos = JSON.parse(localStorage.getItem("agendamentos")) || [];
-
-    let conflito = agendamentos.find(a => a.data === data && a.hora === hora);
-
-    if(conflito){
-        alert("Horário já ocupado");
-        return;
-    }
-
-    agendamentos.push({nome, telefone, data, hora, valor});
-    localStorage.setItem("agendamentos", JSON.stringify(agendamentos));
-
-    const msg = `Olá ${nome}, seu horário foi confirmado para ${data} às ${hora}.`;
-    window.open(`https://wa.me/55${telefone}?text=${encodeURIComponent(msg)}`, "_blank");
-
-    carregar();
+let servicos=JSON.parse(localStorage.getItem("servicos"))||[];
+servicos.push({nome,valor});
+localStorage.setItem("servicos",JSON.stringify(servicos));
+carregarServicos();
 }
 
-document.getElementById("data").addEventListener("change", carregar);
+function removerServico(i){
+let servicos=JSON.parse(localStorage.getItem("servicos"))||[];
+servicos.splice(i,1);
+localStorage.setItem("servicos",JSON.stringify(servicos));
+carregarServicos();
+}
+
+function salvarHorario(){
+let inicio=document.getElementById("inicio").value;
+let fim=document.getElementById("fim").value;
+localStorage.setItem("horario",JSON.stringify({inicio,fim}));
+alert("Horário salvo!");
+}
+
+function agendar(){
+let nome=document.getElementById("nome").value;
+let telefone=document.getElementById("telefone").value;
+let servicoIndex=document.getElementById("servico").value;
+let data=document.getElementById("data").value;
+let hora=document.getElementById("hora").value;
+
+let servicos=JSON.parse(localStorage.getItem("servicos"))||[];
+let servico=servicos[servicoIndex];
+
+if(!nome||!telefone||!servico||!data||!hora)return alert("Preencha tudo");
+
+let agendamentos=JSON.parse(localStorage.getItem("agendamentos"))||[];
+
+let conflito=agendamentos.find(a=>a.data===data&&a.hora===hora);
+if(conflito)return alert("Horário ocupado");
+
+agendamentos.push({nome,telefone,data,hora,servico});
+localStorage.setItem("agendamentos",JSON.stringify(agendamentos));
+
+carregarAgenda();
+}
+
+function carregarAgenda(){
+let data=document.getElementById("data").value;
+let lista=document.getElementById("lista");
+let totalBox=document.getElementById("total");
+lista.innerHTML="";
+let total=0;
+
+let agendamentos=JSON.parse(localStorage.getItem("agendamentos"))||[];
+
+let filtrados=agendamentos.filter(a=>a.data===data);
+
+filtrados.forEach(a=>{
+total+=Number(a.servico.valor);
+lista.innerHTML+=`
+<div class="agendamento-item">
+${a.hora} - ${a.nome} (${a.servico.nome})
+<strong>R$ ${a.servico.valor}</strong>
+</div>`;
+});
+
+totalBox.innerHTML="Total: R$ "+total.toFixed(2);
+}
+
+document.getElementById("data").addEventListener("change",carregarAgenda);
+
+carregarServicos();
 
 </script>
 
