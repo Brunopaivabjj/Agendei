@@ -1,44 +1,397 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Agendei - Dashboard</title>
-  <link rel="stylesheet" href="styles.css">
-  <script type="module" src="app.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agendei</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+--bg:#f6f4ff;
+--card:#ffffff;
+--primary:#8b7cf6;
+--primary-soft:#e9e6ff;
+--text:#1f1f2e;
+--text-soft:#6c6c80;
+--border:#ececf4;
+}
+
+body.dark{
+--bg:#12121a;
+--card:#1c1c28;
+--primary:#9f8cff;
+--primary-soft:#2a2740;
+--text:#ffffff;
+--text-soft:#b3b3cc;
+--border:#2a2a38;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+
+body{
+background:var(--bg);
+color:var(--text);
+display:flex;
+min-height:100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+width:260px;
+background:var(--card);
+border-right:1px solid var(--border);
+padding:30px 20px;
+display:flex;
+flex-direction:column;
+justify-content:space-between;
+}
+
+.logo{
+font-size:22px;
+font-weight:700;
+color:var(--primary);
+margin-bottom:40px;
+}
+
+.nav button{
+width:100%;
+padding:14px;
+border:none;
+background:none;
+text-align:left;
+border-radius:12px;
+margin-bottom:10px;
+cursor:pointer;
+font-weight:500;
+color:var(--text-soft);
+}
+
+.nav button.active,
+.nav button:hover{
+background:var(--primary-soft);
+color:var(--primary);
+}
+
+.main{
+flex:1;
+padding:40px;
+overflow:auto;
+}
+
+.card{
+background:var(--card);
+padding:25px;
+border-radius:18px;
+box-shadow:0 10px 25px rgba(0,0,0,0.05);
+margin-bottom:25px;
+}
+
+h2{
+margin-bottom:20px;
+font-weight:600;
+}
+
+button.primary{
+background:var(--primary);
+color:white;
+border:none;
+padding:12px 18px;
+border-radius:12px;
+cursor:pointer;
+font-weight:600;
+}
+
+button.secondary{
+background:var(--primary-soft);
+border:none;
+padding:10px 14px;
+border-radius:10px;
+cursor:pointer;
+color:var(--primary);
+font-weight:500;
+}
+
+input,select,textarea{
+width:100%;
+padding:12px;
+border-radius:10px;
+border:1px solid var(--border);
+margin-bottom:15px;
+background:var(--card);
+color:var(--text);
+}
+
+.flex{
+display:flex;
+gap:15px;
+flex-wrap:wrap;
+}
+
+.modal{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.4);
+display:none;
+align-items:center;
+justify-content:center;
+}
+
+.modal-content{
+background:var(--card);
+padding:30px;
+border-radius:18px;
+width:95%;
+max-width:500px;
+}
+
+.toggle{
+display:flex;
+align-items:center;
+gap:10px;
+cursor:pointer;
+}
+
+/* RESPONSIVO */
+
+@media(max-width:900px){
+.sidebar{
+position:fixed;
+left:-260px;
+top:0;
+height:100%;
+transition:0.3s;
+z-index:1000;
+}
+.sidebar.open{
+left:0;
+}
+.main{
+padding:20px;
+}
+.menu-toggle{
+display:block;
+margin-bottom:20px;
+}
+}
+</style>
 </head>
 <body>
-  <!-- Header -->
-  <header>
-    <h1>Agendei</h1>
-  </header>
 
-  <!-- Login / Registro -->
-  <div id="login-div">
-    <input type="email" id="email" placeholder="Email">
-    <input type="password" id="password" placeholder="Senha">
-    <div class="buttons">
-      <button id="login-btn"><i class="fas fa-sign-in-alt"></i> Entrar</button>
-    </div>
-  </div>
+<div class="sidebar" id="sidebar">
+<div>
+<div class="logo">Agendei</div>
 
-  <!-- Dashboard -->
-  <div id="dashboard-div" class="hidden">
-    <button id="logout-btn"><i class="fas fa-sign-out-alt"></i> Sair</button>
+<div class="nav">
+<button onclick="showTab('agendar')" class="active">Agendar</button>
+<button onclick="showTab('agendados')">Agendei</button>
+<button onclick="showTab('config')">Configurações</button>
+</div>
+</div>
 
-    <!-- Formulário de agendamento -->
-    <div class="appointment-form">
-      <h2>Novo Agendamento</h2>
-      <input type="date" id="appointment-date">
-      <input type="time" id="appointment-time">
-      <input type="text" id="appointment-service" placeholder="Serviço">
-      <button id="add-appointment-btn"><i class="fas fa-plus"></i> Adicionar</button>
-    </div>
+<div>
+<button class="secondary" onclick="toggleDark()">Modo Escuro</button>
+</div>
+</div>
 
-    <h2>Seus Agendamentos</h2>
-    <ul id="appointments-list"></ul>
-    <p id="save-status"></p>
-  </div>
+<div class="main">
+
+<button class="secondary menu-toggle" onclick="toggleSidebar()">☰ Menu</button>
+
+<div id="agendar" class="tab">
+<div class="card">
+<h2>Novo Agendamento</h2>
+
+<input placeholder="Nome do Cliente" id="clienteNome">
+
+<select id="servicoSelect"></select>
+<select id="profissionalSelect"></select>
+
+<input type="date" id="dataAgendamento">
+<input type="time" id="horaAgendamento">
+
+<button class="primary" onclick="salvarAgendamento()">Agendar</button>
+</div>
+</div>
+
+<div id="agendados" class="tab" style="display:none;">
+<div class="card">
+<h2>Agendamentos</h2>
+<div id="listaAgendamentos"></div>
+</div>
+</div>
+
+<div id="config" class="tab" style="display:none;">
+
+<div class="card">
+<h2>Serviços</h2>
+<button class="secondary" onclick="abrirModal('modalServico')">Adicionar Serviço</button>
+<div id="listaServicos"></div>
+</div>
+
+<div class="card">
+<h2>Profissionais</h2>
+<button class="secondary" onclick="abrirModal('modalProfissional')">Adicionar Profissional</button>
+<div id="listaProfissionais"></div>
+</div>
+
+</div>
+
+</div>
+
+<!-- MODAIS -->
+
+<div class="modal" id="modalServico">
+<div class="modal-content">
+<h2>Novo Serviço</h2>
+<input placeholder="Nome do Serviço" id="servicoNome">
+<input placeholder="Valor" id="servicoValor">
+<input placeholder="Duração (minutos)" id="servicoDuracao">
+<button class="primary" onclick="addServico()">Salvar</button>
+<button class="secondary" onclick="fecharModal()">Cancelar</button>
+</div>
+</div>
+
+<div class="modal" id="modalProfissional">
+<div class="modal-content">
+<h2>Novo Profissional</h2>
+<input placeholder="Nome" id="profNome">
+<input placeholder="WhatsApp (com DDD)" id="profWhatsapp">
+<button class="primary" onclick="addProfissional()">Salvar</button>
+<button class="secondary" onclick="fecharModal()">Cancelar</button>
+</div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/12.10.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore-compat.js"></script>
+
+<script>
+
+const firebaseConfig = {
+    apiKey: "AIzaSyAxyovmqjNYIzOYYDZZnduquiJQeK4UIgc",
+    authDomain: "agendei-d721e.firebaseapp.com",
+    projectId: "agendei-d721e",
+    storageBucket: "agendei-d721e.firebasestorage.app",
+    messagingSenderId: "525023801595",
+    appId: "1:525023801595:web:71a6d72e986e6e9e30005e",
+    measurementId: "G-YQP41N6MJ3"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+/* ===== FUNÇÕES VISUAIS ===== */
+
+function showTab(tab){
+    document.querySelectorAll(".tab").forEach(t=>t.style.display="none")
+    document.getElementById(tab).style.display="block"
+
+    document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"))
+    event.target.classList.add("active")
+}
+
+function toggleSidebar(){
+    document.getElementById("sidebar").classList.toggle("open")
+}
+
+function toggleDark(){
+    document.body.classList.toggle("dark")
+}
+
+function abrirModal(id){
+    document.getElementById(id).style.display="flex"
+}
+
+function fecharModal(){
+    document.querySelectorAll(".modal").forEach(m=>m.style.display="none")
+}
+    
+/* SERVIÇOS */
+function addServico(){
+    const nome = document.getElementById("servicoNome").value
+    const valor = document.getElementById("servicoValor").value
+    const duracao = document.getElementById("servicoDuracao").value
+
+    db.collection("servicos").add({ nome,valor,duracao })
+    .then(()=>{ fecharModal(); carregarServicos(); })
+}
+
+function carregarServicos(){
+    db.collection("servicos").get().then(snapshot=>{
+        let html=""
+        let select=document.getElementById("servicoSelect")
+        select.innerHTML=""
+        snapshot.forEach(doc=>{
+            const s=doc.data()
+            html+=`<p>${s.nome} - R$${s.valor} - ${s.duracao}min</p>`
+            select.innerHTML+=`<option value="${s.nome}">${s.nome}</option>`
+        })
+        document.getElementById("listaServicos").innerHTML=html
+    })
+}
+
+/* PROFISSIONAIS */
+function addProfissional(){
+    const nome=document.getElementById("profNome").value
+    const whatsapp=document.getElementById("profWhatsapp").value
+
+    db.collection("profissionais").add({ nome,whatsapp })
+    .then(()=>{ fecharModal(); carregarProfissionais(); })
+}
+
+function carregarProfissionais(){
+    db.collection("profissionais").get().then(snapshot=>{
+        let html=""
+        let select=document.getElementById("profissionalSelect")
+        select.innerHTML=""
+        snapshot.forEach(doc=>{
+            const p=doc.data()
+            html+=`<p>${p.nome} - ${p.whatsapp}</p>`
+            select.innerHTML+=`<option value="${p.nome}">${p.nome}</option>`
+        })
+        document.getElementById("listaProfissionais").innerHTML=html
+    })
+}
+
+/* AGENDAMENTOS */
+function salvarAgendamento(){
+    const cliente=document.getElementById("clienteNome").value
+    const servico=document.getElementById("servicoSelect").value
+    const profissional=document.getElementById("profissionalSelect").value
+    const data=document.getElementById("dataAgendamento").value
+    const hora=document.getElementById("horaAgendamento").value
+
+    db.collection("agendamentos").add({
+        cliente,servico,profissional,data,hora
+    }).then(()=>carregarAgendamentos())
+}
+
+function carregarAgendamentos(){
+    db.collection("agendamentos").get().then(snapshot=>{
+        let html=""
+        snapshot.forEach(doc=>{
+            const a=doc.data()
+            html+=`
+            <div class="card">
+                <strong>${a.cliente}</strong><br>
+                ${a.servico} - ${a.data} ${a.hora}<br>
+                Profissional: ${a.profissional}
+            </div>`
+        })
+        document.getElementById("listaAgendamentos").innerHTML=html
+    })
+}
+
+carregarServicos()
+carregarProfissionais()
+carregarAgendamentos()
+
+</script>
+
 </body>
 </html>
 
