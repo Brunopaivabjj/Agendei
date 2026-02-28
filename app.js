@@ -1,22 +1,13 @@
 // app.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
 import {
-  getAuth,
-  setPersistence,
-  browserLocalPersistence,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged
+  getAuth, setPersistence, browserLocalPersistence,
+  signInWithEmailAndPassword, createUserWithEmailAndPassword,
+  signOut, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
 
 import {
-  getDatabase,
-  ref,
-  set,
-  get,
-  push,
-  remove
+  getDatabase, ref, set, get, push, remove
 } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
 
 const firebaseConfig = {
@@ -25,7 +16,7 @@ const firebaseConfig = {
   projectId: "agendei-d721e",
   storageBucket: "agendei-d721e.firebasestorage.app",
   messagingSenderId: "525023801595",
-  appId: "1:525023801595:web:71a6d72e986e6e9e30005e",
+  appId: "1:525023801595:web:71a6d72e986e6e30005e",
   measurementId: "G-YQP41N6MJ3",
   databaseURL: "https://agendei-d721e-default-rtdb.firebaseio.com/"
 };
@@ -33,7 +24,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const database = getDatabase(app);
-
 setPersistence(auth, browserLocalPersistence).catch(console.error);
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -55,64 +45,31 @@ document.addEventListener("DOMContentLoaded", () => {
   loginBtn?.addEventListener("click", () => {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
-
     signInWithEmailAndPassword(auth, email, password)
-      .then((cred) => {
-        currentUserUid = cred.user.uid;
-        loginDiv.classList.add("hidden");
-        dashboardDiv.classList.remove("hidden");
-        loadAppointments();
-      })
+      .then((cred) => { currentUserUid = cred.user.uid; loginDiv.classList.add("hidden"); dashboardDiv.classList.remove("hidden"); loadAppointments(); })
       .catch((e) => alert("Erro: " + e.message));
   });
 
   registerBtn?.addEventListener("click", () => {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
-
     createUserWithEmailAndPassword(auth, email, password)
-      .then((cred) => {
-        currentUserUid = cred.user.uid;
-        loginDiv.classList.add("hidden");
-        dashboardDiv.classList.remove("hidden");
-        appointmentsList.innerHTML = "";
-        saveStatus.textContent = "Conta criada! Adicione seu primeiro agendamento.";
-      })
+      .then((cred) => { currentUserUid = cred.user.uid; loginDiv.classList.add("hidden"); dashboardDiv.classList.remove("hidden"); appointmentsList.innerHTML = ""; saveStatus.textContent = "Conta criada! Adicione seu primeiro agendamento."; })
       .catch((e) => alert("Erro: " + e.message));
   });
 
   logoutBtn?.addEventListener("click", () => {
-    signOut(auth).then(() => {
-      loginDiv.classList.remove("hidden");
-      dashboardDiv.classList.add("hidden");
-      appointmentsList.innerHTML = "";
-      saveStatus.textContent = "";
-      currentUserUid = null;
-      editingKey = null;
-    });
+    signOut(auth).then(() => { loginDiv.classList.remove("hidden"); dashboardDiv.classList.add("hidden"); appointmentsList.innerHTML = ""; saveStatus.textContent = ""; currentUserUid = null; editingKey = null; });
   });
 
   onAuthStateChanged(auth, (user) => {
-    if (user) {
-      currentUserUid = user.uid;
-      loginDiv.classList.add("hidden");
-      dashboardDiv.classList.remove("hidden");
-      loadAppointments();
-    } else {
-      loginDiv.classList.remove("hidden");
-      dashboardDiv.classList.add("hidden");
-      appointmentsList.innerHTML = "";
-      saveStatus.textContent = "";
-      currentUserUid = null;
-      editingKey = null;
-    }
+    if (user) { currentUserUid = user.uid; loginDiv.classList.add("hidden"); dashboardDiv.classList.remove("hidden"); loadAppointments(); } 
+    else { loginDiv.classList.remove("hidden"); dashboardDiv.classList.add("hidden"); appointmentsList.innerHTML = ""; saveStatus.textContent = ""; currentUserUid = null; editingKey = null; }
   });
 
   addAppointmentBtn?.addEventListener("click", () => {
     if (!currentUserUid) return;
-    const date = dateInput.value;
-    const time = timeInput.value;
-    const service = serviceInput.value.trim();
+    const date = dateInput.value, time = timeInput.value, service = serviceInput.value.trim();
     if (!date || !time || !service) return alert("Preencha todos os campos");
 
     if (editingKey) {
@@ -129,8 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function loadAppointments() {
     if (!currentUserUid) return;
-    const userRef = ref(database, `users/${currentUserUid}/appointments`);
-    get(userRef).then((snapshot) => {
+    get(ref(database, `users/${currentUserUid}/appointments`)).then((snapshot) => {
       appointmentsList.innerHTML = "";
       if (snapshot.exists()) {
         const data = snapshot.val();
@@ -140,18 +96,8 @@ document.addEventListener("DOMContentLoaded", () => {
             <button class="edit-btn" title="Editar"><i class="fas fa-edit"></i></button>
             <button class="delete-btn" title="Excluir"><i class="fas fa-trash-alt"></i></button>`;
 
-          li.querySelector(".edit-btn").addEventListener("click", () => {
-            dateInput.value = data[key].date;
-            timeInput.value = data[key].time;
-            serviceInput.value = data[key].service;
-            editingKey = key;
-          });
-
-          li.querySelector(".delete-btn").addEventListener("click", () => {
-            remove(ref(database, `users/${currentUserUid}/appointments/${key}`))
-              .then(() => { saveStatus.textContent = "Agendamento excluído!"; loadAppointments(); })
-              .catch(() => saveStatus.textContent = "Erro ao excluir!");
-          });
+          li.querySelector(".edit-btn").addEventListener("click", () => { dateInput.value = data[key].date; timeInput.value = data[key].time; serviceInput.value = data[key].service; editingKey = key; });
+          li.querySelector(".delete-btn").addEventListener("click", () => { remove(ref(database, `users/${currentUserUid}/appointments/${key}`)).then(() => { saveStatus.textContent = "Agendamento excluído!"; loadAppointments(); }).catch(() => saveStatus.textContent = "Erro ao excluir!"); });
 
           appointmentsList.appendChild(li);
         });
@@ -159,11 +105,5 @@ document.addEventListener("DOMContentLoaded", () => {
     }).catch(console.error);
   }
 
-  function resetForm() {
-    dateInput.value = "";
-    timeInput.value = "";
-    serviceInput.value = "";
-    editingKey = null;
-    setTimeout(() => saveStatus.textContent = "", 2000);
-  }
+  function resetForm() { dateInput.value = ""; timeInput.value = ""; serviceInput.value = ""; editingKey = null; setTimeout(() => saveStatus.textContent = "", 2000); }
 });
