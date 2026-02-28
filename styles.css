@@ -1,50 +1,64 @@
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Poppins', sans-serif;
   display: flex;
   justify-content: center;
   align-items: flex-start;
   padding-top: 50px;
-  background: #f2f2f2;
+  background: linear-gradient(to bottom, #ffe6f0, #fff0f7);
   margin: 0;
 }
 
 #login-div, #dashboard-div {
-  border-radius: 15px;
+  border-radius: 20px;
   background: #fff;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-  padding: 30px;
-  width: 420px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  padding: 35px;
+  width: 450px;
   text-align: center;
+  transition: transform 0.3s;
+}
+
+#login-div:hover, #dashboard-div:hover {
+  transform: translateY(-5px);
 }
 
 h1, h2 {
-  color: #333;
+  color: #a5214f;
   margin-bottom: 15px;
 }
 
 input {
   width: 90%;
-  padding: 10px;
-  margin: 8px 0;
-  border-radius: 8px;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 10px;
   border: 1px solid #ccc;
   font-size: 15px;
+  transition: border 0.3s, box-shadow 0.3s;
+}
+
+input:focus {
+  border-color: #d6336c;
+  box-shadow: 0 0 5px rgba(214,51,108,0.5);
+  outline: none;
 }
 
 button {
-  padding: 10px 18px;
+  padding: 10px 20px;
   background: #d6336c;
-  color: white;
+  color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   cursor: pointer;
   margin-left: 5px;
   margin-top: 5px;
   font-size: 14px;
+  transition: background 0.3s, transform 0.2s;
 }
 
 button:hover {
   background: #a5214f;
+  transform: scale(1.05);
 }
 
 .buttons {
@@ -64,15 +78,22 @@ li {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 10px;
-  border-bottom: 1px solid #ddd;
+  padding: 10px 12px;
+  border-bottom: 1px solid #f0d6e0;
   font-size: 14px;
+  border-radius: 10px;
+  transition: background 0.3s;
+}
+
+li:hover {
+  background: #ffe6f0;
 }
 
 li span { flex: 1; text-align: left; }
 
 li button {
-  padding: 5px 10px;
-  margin: 0 2px;
-  font-size: 13px;
+  padding: 6px 12px;
+  margin: 0 3px;
+  font-size: 14px;
+  border-radius: 10px;
 }
