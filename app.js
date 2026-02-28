@@ -24,7 +24,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// Persistência para manter o login ativo
+// Persistência para manter login ativo
 setPersistence(auth, browserLocalPersistence)
   .then(() => console.log("Persistência configurada: usuário permanecerá logado"))
   .catch((error) => console.error("Erro na persistência:", error));
