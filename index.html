@@ -1,44 +1,37 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
-
+<html lang="pt-br">
 <head>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Agendei</title>
+<title>Agenda</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="style.css">
 
 </head>
 
 <body>
 
-<div class="container">
-
-<h1>Agendei</h1>
-
-<p>Sistema de agendamento para salões e profissionais da beleza.</p>
-
-<div class="menu">
-
-<button id="novoCliente">Novo cliente</button>
-
-<button id="novoAgendamento">Novo agendamento</button>
-
-<button id="verAgenda">Ver agenda</button>
-
-</div>
-
 <div id="app"></div>
 
-</div>
+<nav class="menu">
 
-<script type="module" src="script.js"></script>
-  
+<button onclick="abrirAgendar()">
+Agendar
+</button>
+
+<button onclick="abrirAgendamentos()">
+Agendei
+</button>
+
+<button onclick="abrirConfiguracoes()">
+⚙️
+</button>
+
+</nav>
+
+<script type="module" src="app.js"></script>
+
 </body>
-
 </html>
-
