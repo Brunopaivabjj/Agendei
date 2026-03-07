@@ -1,83 +1,25 @@
-body {
-  font-family: 'Poppins', sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: linear-gradient(to bottom, #ffe6f0, #fff0f7);
-  margin: 0;
-  padding-top: 20px;
+body{
+  margin:0;
+  font-family:'Inter', sans-serif;
+  background:#f4f6f9;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
 }
 
-header {
-  margin-bottom: 20px;
-  text-align: center;
+.container{
+  text-align:center;
+  background:white;
+  padding:40px;
+  border-radius:10px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.1);
 }
 
-header h1 {
-  font-size: 36px;
-  color: #d6336c;
-  text-shadow: 1px 1px 3px #f0b2c0;
+h1{
+  margin-bottom:10px;
 }
 
-#login-div, #dashboard-div {
-  background: #fff;
-  border-radius: 25px;
-  padding: 40px;
-  width: 480px;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.2);
-  transition: transform 0.3s;
+p{
+  color:#666;
 }
-
-#login-div:hover, #dashboard-div:hover { transform: translateY(-5px); }
-
-input {
-  width: 90%;
-  padding: 12px;
-  margin: 10px 0;
-  border-radius: 12px;
-  border: 1px solid #ccc;
-  font-size: 15px;
-  transition: border 0.3s, box-shadow 0.3s;
-}
-
-input:focus { border-color: #d6336c; box-shadow: 0 0 6px rgba(214,51,108,0.5); outline: none; }
-
-button {
-  padding: 12px 25px;
-  background: linear-gradient(45deg, #d6336c, #ff5a8d);
-  color: white;
-  border: none;
-  border-radius: 15px;
-  cursor: pointer;
-  margin: 5px;
-  font-size: 15px;
-  transition: transform 0.2s, box-shadow 0.3s;
-}
-
-button:hover { transform: scale(1.08); box-shadow: 0 5px 15px rgba(214,51,108,0.5); }
-
-.buttons { display: flex; justify-content: space-between; }
-
-.hidden { display: none; }
-
-ul { list-style: none; padding: 0; margin-top: 20px; }
-
-.appointment-card {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: linear-gradient(120deg, #fff0f7, #ffe6f0);
-  padding: 12px 15px;
-  margin: 8px 0;
-  border-radius: 20px;
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.appointment-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(214,51,108,0.3);
-}
-
-li span { flex: 1; text-align: left; font-weight: 500; color: #a5214f; }
-
-li button { padding: 6px 12px; font-size: 14px; border-radius: 12px; }
