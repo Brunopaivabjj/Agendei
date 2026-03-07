@@ -1,436 +1,53 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agendei</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <title>Agendei</title>
 
-<style>
-:root{
---primary:#b993d6;
---secondary:#8ca6db;
---bg:#f5f7fa;
---card:#ffffff;
---text:#1e1e1e;
-}
+  <!-- Fonte moderna -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 
-.dark{
---bg:#111827;
---card:#1f2937;
---text:#f3f4f6;
-}
+  <style>
+    body{
+      margin:0;
+      font-family:'Inter', sans-serif;
+      background:#f4f6f9;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      height:100vh;
+    }
 
-*{margin:0;padding:0;box-sizing:border-box;font-family:Inter;}
+    .container{
+      text-align:center;
+      background:white;
+      padding:40px;
+      border-radius:10px;
+      box-shadow:0 10px 25px rgba(0,0,0,0.1);
+    }
 
-body{
-background:var(--bg);
-color:var(--text);
-display:flex;
-min-height:100vh;
-}
+    h1{
+      margin-bottom:10px;
+    }
 
-.sidebar{
-width:240px;
-background:linear-gradient(180deg,var(--primary),var(--secondary));
-padding:30px 20px;
-color:white;
-display:flex;
-flex-direction:column;
-}
+    p{
+      color:#666;
+    }
+  </style>
 
-.logo{
-font-size:24px;
-font-weight:700;
-margin-bottom:40px;
-}
-
-.nav-btn{
-background:none;
-border:none;
-color:white;
-text-align:left;
-padding:12px 0;
-cursor:pointer;
-font-size:14px;
-}
-
-.main{
-flex:1;
-padding:40px;
-overflow:auto;
-}
-
-.card{
-background:var(--card);
-padding:25px;
-border-radius:16px;
-box-shadow:0 10px 30px rgba(0,0,0,0.05);
-margin-bottom:25px;
-}
-
-input,select,textarea{
-width:100%;
-padding:12px;
-margin-top:10px;
-border-radius:8px;
-border:1px solid #ddd;
-}
-
-button{
-margin-top:10px;
-padding:8px 12px;
-border:none;
-border-radius:6px;
-cursor:pointer;
-background:linear-gradient(90deg,var(--primary),var(--secondary));
-color:white;
-font-weight:600;
-}
-
-.hidden{display:none;}
-
-.topbar{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:30px;
-}
-
-.agendamento-item, .servico-item, .profissional-item{
-padding:10px;
-border-bottom:1px solid #eee;
-font-size:14px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
-
-.item-buttons button{
-margin-left:5px;
-background:#ccc;
-color:#111;
-}
-</style>
 </head>
 
 <body>
 
-<!-- TELA DE LOGIN -->
-<div id="loginScreen" style="margin:auto;max-width:400px;width:100%;">
-  <div class="card">
-    <h2 style="text-align:center;margin-bottom:20px;">Agendei</h2>
-    <input id="email" placeholder="Email">
-    <input id="senha" type="password" placeholder="Senha">
-    <button onclick="login()">Entrar</button>
-    <p id="loginError" style="color:red;margin-top:10px;"></p>
+  <div class="container">
+    <h1>Agendei</h1>
+    <p>Sistema de agendamento</p>
+    <p>Projeto iniciado com sucesso 🚀</p>
   </div>
-</div>
-
-<!-- APP -->
-<div id="app" class="hidden">
-
-  <div class="sidebar">
-    <div class="logo">Agendei</div>
-    <button class="nav-btn" onclick="showTab('agendar')">Agendar</button>
-    <button class="nav-btn" onclick="showTab('agendei')">Agendei</button>
-    <button class="nav-btn" onclick="showTab('config')">Configurações</button>
-    <button class="nav-btn toggle-dark" onclick="toggleDark()">Modo Escuro</button>
-    <button class="nav-btn" onclick="logout()">Sair</button>
-  </div>
-
-  <div class="main">
-
-    <div class="topbar">
-      <h2 id="tituloAba">Agendar</h2>
-    </div>
-
-    <!-- AGENDAR -->
-    <div id="agendar" class="tab">
-      <div class="card">
-        <input id="clienteNome" placeholder="Nome do Cliente">
-        <select id="servicoSelect"></select>
-        <select id="profissionalSelect"></select>
-        <input type="date" id="dataAgendamento">
-        <input type="time" id="horaAgendamento">
-        <button onclick="agendar()">Confirmar Agendamento</button>
-      </div>
-    </div>
-
-    <!-- AGENDAMENTOS -->
-    <div id="agendei" class="tab hidden">
-      <div class="card">
-        <h3>Agendamentos</h3>
-        <div id="listaAgendamentos"></div>
-      </div>
-    </div>
-
-    <!-- CONFIG -->
-    <div id="config" class="tab hidden">
-
-      <div class="card">
-        <h3>Serviços</h3>
-        <input id="novoServico" placeholder="Nome do serviço">
-        <input id="duracaoServico" placeholder="Duração (minutos)">
-        <button onclick="addServico()">Adicionar</button>
-        <div id="listaServicos"></div>
-      </div>
-
-      <div class="card">
-        <h3>Profissionais</h3>
-        <input id="novoProfissional" placeholder="Nome">
-        <input id="whatsProfissional" placeholder="WhatsApp">
-        <button onclick="addProfissional()">Adicionar</button>
-        <div id="listaProfissionais"></div>
-      </div>
-
-      <div class="card">
-        <h3>Mensagem Cliente</h3>
-        <textarea id="msgCliente" style="width:100%;height:80px;"></textarea>
-      </div>
-
-      <div class="card">
-        <h3>Mensagem Profissional</h3>
-        <textarea id="msgProfissional" style="width:100%;height:80px;"></textarea>
-      </div>
-
-    </div>
-
-  </div>
-</div>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-import { 
-  getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut 
-} from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
-import { 
-  getFirestore, collection, addDoc, query, where, onSnapshot, doc, updateDoc, deleteDoc 
-} from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyAxyovmqjNYIzOYYDZZnduquiJQeK4UIgc",
-  authDomain: "agendei-d721e.firebaseapp.com",
-  projectId: "agendei-d721e",
-  storageBucket: "agendei-d721e.firebasestorage.app",
-  messagingSenderId: "525023801595",
-  appId: "1:525023801595:web:71a6d72e986e6e9e30005e",
-  measurementId: "G-YQP41N6MJ3"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-const loginScreen = document.getElementById("loginScreen");
-const appScreen = document.getElementById("app");
-const loginError = document.getElementById("loginError");
-
-let currentUserUid = null;
-
-// LOGIN
-window.login = async function(){
-  try {
-    const userCredential = await signInWithEmailAndPassword(auth,email.value,senha.value);
-    currentUserUid = userCredential.user.uid;
-  } catch(err) {
-    loginError.innerText = "Erro no login: " + err.message;
-  }
-}
-
-// LOGOUT
-window.logout = function(){
-  signOut(auth);
-}
-
-// DETECTA ESTADO DE LOGIN
-onAuthStateChanged(auth,(user)=>{
-  if(user){
-    currentUserUid = user.uid;
-    loginScreen.classList.add("hidden");
-    appScreen.classList.remove("hidden");
-    loadData();
-  } else {
-    loginScreen.classList.remove("hidden");
-    appScreen.classList.add("hidden");
-  }
-});
-
-// ABAS
-window.showTab=function(tab){
-  document.querySelectorAll(".tab").forEach(t=>t.classList.add("hidden"));
-  document.getElementById(tab).classList.remove("hidden");
-  tituloAba.innerText=tab.charAt(0).toUpperCase()+tab.slice(1);
-}
-
-// MODO ESCURO
-window.toggleDark=function(){
-  document.body.classList.toggle("dark");
-}
-
-// CARREGA DADOS
-function loadData(){
-  loadServicos();
-  loadProfissionais();
-  loadAgendamentos();
-}
-
-// ------------------ SERVIÇOS ------------------
-async function addServico(){
-  if(!novoServico.value || !duracaoServico.value) return;
-  await addDoc(collection(db,"servicos"),{
-    uid: currentUserUid,
-    nome: novoServico.value,
-    duracao: duracaoServico.value
-  });
-  novoServico.value="";
-  duracaoServico.value="";
-}
-
-function loadServicos(){
-  const q = query(collection(db,"servicos"), where("uid","==",currentUserUid));
-  onSnapshot(q,(snapshot)=>{
-    servicoSelect.innerHTML="";
-    listaServicos.innerHTML="";
-    snapshot.forEach(docItem=>{
-      const s = docItem.data();
-      servicoSelect.innerHTML += `<option>${s.nome}</option>`;
-      listaServicos.innerHTML += `
-        <div class="servico-item">
-          ${s.nome} (${s.duracao}min)
-          <span class="item-buttons">
-            <button onclick="editServico('${docItem.id}','${s.nome}','${s.duracao}')">Editar</button>
-            <button onclick="deleteServico('${docItem.id}')">Excluir</button>
-          </span>
-        </div>`;
-    });
-  });
-}
-
-async function editServico(id,nome,duracao){
-  const novoNome = prompt("Nome do serviço:",nome);
-  if(!novoNome) return;
-  const novaDuracao = prompt("Duração (minutos):",duracao);
-  if(!novaDuracao) return;
-  await updateDoc(doc(db,"servicos",id),{nome:novoNome,duracao:novaDuracao});
-}
-
-async function deleteServico(id){
-  if(confirm("Deseja realmente excluir este serviço?")){
-    await deleteDoc(doc(db,"servicos",id));
-  }
-}
-
-// ------------------ PROFISSIONAIS ------------------
-async function addProfissional(){
-  if(!novoProfissional.value || !whatsProfissional.value) return;
-  await addDoc(collection(db,"profissionais"),{
-    uid: currentUserUid,
-    nome: novoProfissional.value,
-    whatsapp: whatsProfissional.value
-  });
-  novoProfissional.value="";
-  whatsProfissional.value="";
-}
-
-function loadProfissionais(){
-  const q = query(collection(db,"profissionais"), where("uid","==",currentUserUid));
-  onSnapshot(q,(snapshot)=>{
-    profissionalSelect.innerHTML="";
-    listaProfissionais.innerHTML="";
-    snapshot.forEach(docItem=>{
-      const p = docItem.data();
-      profissionalSelect.innerHTML += `<option>${p.nome}</option>`;
-      listaProfissionais.innerHTML += `
-        <div class="profissional-item">
-          ${p.nome} - ${p.whatsapp}
-          <span class="item-buttons">
-            <button onclick="editProf('${docItem.id}','${p.nome}','${p.whatsapp}')">Editar</button>
-            <button onclick="deleteProf('${docItem.id}')">Excluir</button>
-          </span>
-        </div>`;
-    });
-  });
-}
-
-async function editProf(id,nome,whats){
-  const novoNome = prompt("Nome do profissional:",nome);
-  if(!novoNome) return;
-  const novoWhats = prompt("WhatsApp:",whats);
-  if(!novoWhats) return;
-  await updateDoc(doc(db,"profissionais",id),{nome:novoNome,whatsapp:novoWhats});
-}
-
-async function deleteProf(id){
-  if(confirm("Deseja realmente excluir este profissional?")){
-    await deleteDoc(doc(db,"profissionais",id));
-  }
-}
-
-// ------------------ AGENDAMENTOS ------------------
-async function agendar(){
-  if(!clienteNome.value) return;
-  await addDoc(collection(db,"agendamentos"),{
-    uid: currentUserUid,
-    cliente: clienteNome.value,
-    servico: servicoSelect.value,
-    profissional: profissionalSelect.value,
-    data: dataAgendamento.value,
-    hora: horaAgendamento.value
-  });
-  clienteNome.value="";
-}
-
-function loadAgendamentos(){
-  const q = query(collection(db,"agendamentos"), where("uid","==",currentUserUid));
-  onSnapshot(q,(snapshot)=>{
-    listaAgendamentos.innerHTML="";
-    snapshot.forEach(docItem=>{
-      const a = docItem.data();
-      listaAgendamentos.innerHTML += `
-        <div class="agendamento-item">
-          <div>
-            <strong>${a.data} ${a.hora}</strong><br>
-            Cliente: ${a.cliente}<br>
-            Serviço: ${a.servico}<br>
-            Profissional: ${a.profissional}
-          </div>
-          <span class="item-buttons">
-            <button onclick="editAgendamento('${docItem.id}','${a.cliente}','${a.servico}','${a.profissional}','${a.data}','${a.hora}')">Editar</button>
-            <button onclick="deleteAgendamento('${docItem.id}')">Excluir</button>
-          </span>
-        </div>`;
-    });
-  });
-}
-
-async function editAgendamento(id,cliente,servico,profissional,data,hora){
-  const novoCliente = prompt("Nome do cliente:",cliente);
-  if(!novoCliente) return;
-  const novoServico = prompt("Serviço:",servico);
-  if(!novoServico) return;
-  const novoProf = prompt("Profissional:",profissional);
-  if(!novoProf) return;
-  const novaData = prompt("Data (YYYY-MM-DD):",data);
-  if(!novaData) return;
-  const novaHora = prompt("Hora (HH:MM):",hora);
-  if(!novaHora) return;
-  await updateDoc(doc(db,"agendamentos",id),{
-    cliente: novoCliente,
-    servico: novoServico,
-    profissional: novoProf,
-    data: novaData,
-    hora: novaHora
-  });
-}
-
-async function deleteAgendamento(id){
-  if(confirm("Deseja realmente excluir este agendamento?")){
-    await deleteDoc(doc(db,"agendamentos",id));
-  }
-}
-</script>
 
 </body>
+
 </html>
