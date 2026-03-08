@@ -163,18 +163,32 @@ font-size:14px;
 
 <script>
 
-function mostrarTela(tela){
+function gerarHorarios(){
 
-document.querySelectorAll(".tela")
-.forEach(t=>t.classList.remove("ativa"))
+let select = document.getElementById("hora")
 
-document.getElementById(tela).classList.add("ativa")
+select.innerHTML=""
 
-if(tela=="telaAgendei") atualizarAgendamentos()
+let inicio = 9
+let fim = 18
 
-if(tela=="telaConfig") atualizarConfig()
+for(let h = inicio; h < fim; h++){
 
-if(tela=="telaAgendar") gerarHorarios()
+for(let m of ["00","30"]){
+
+let hora = h.toString().padStart(2,"0")+":"+m
+
+let ocupado = agendamentos.find(a=>a.hora==hora)
+
+if(!ocupado){
+
+select.innerHTML += `<option>${hora}</option>`
+
+}
+
+}
+
+}
 
 }
 
