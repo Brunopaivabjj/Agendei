@@ -63,8 +63,108 @@ duracao:Number(duracao)
 
 })
 
+  function addProf(){
+
+let nome = document.getElementById("novoProf").value
+
+profissionais.push({
+
+nome:nome
+
+})
+
 salvarDados()
 atualizarConfig()
+
+}
+function addProf(){
+
+let nome = document.getElementById("novoProf").value
+
+profissionais.push({
+
+nome:nome
+
+})
+
+salvarDados()
+atualizarConfig()
+
+}
+  function gerarHorarios(){
+
+let select = document.getElementById("hora")
+
+select.innerHTML=""
+
+let inicio = 9
+let fim = 19
+
+for(let h=inicio;h<fim;h++){
+
+for(let m of ["00","30"]){
+
+let hora = h.toString().padStart(2,"0")+":"+m
+
+let ocupado = agendamentos.find(a=>a.hora==hora)
+
+if(!ocupado){
+
+select.innerHTML+=`<option>${hora}</option>`
+
+}
+
+}
+
+}
+
+}
+  function agendar(){
+
+let cliente = document.getElementById("cliente").value
+let servico = document.getElementById("servico").value
+let profissional = document.getElementById("profissional").value
+let data = document.getElementById("data").value
+let hora = document.getElementById("hora").value
+
+agendamentos.push({
+
+cliente,
+servico,
+profissional,
+data,
+hora
+
+})
+
+salvarDados()
+
+alert("Agendamento criado")
+
+}
+  function atualizarAgendamentos(){
+
+let lista = document.getElementById("listaAgendamentos")
+
+lista.innerHTML=""
+
+agendamentos.forEach(a=>{
+
+lista.innerHTML+=`
+
+<div class="card">
+
+<strong>${a.hora}</strong><br>
+
+${a.cliente}<br>
+
+${a.servico} - ${a.profissional}
+
+</div>
+
+`
+
+})
 
 }
 window.abrirAgendar = abrirAgendar
