@@ -1,180 +1,246 @@
-let servicos = [];
-let profissionais = [];
-let agendamentos = [];
+let servicos = []
+let profissionais = []
+let agendamentos = []
 
-function mostrarTela(tela) {
+function mostrarTela(id){
 
-  document.getElementById("tela-agendar").style.display = "none";
-  document.getElementById("tela-agendamentos").style.display = "none";
-  document.getElementById("tela-config").style.display = "none";
+document.querySelectorAll(".tela").forEach(t=>{
 
-  document.getElementById("tela-" + tela).style.display = "block";
+t.style.display="none"
 
-}
+})
 
-function carregarDados(){
-
-  servicos = JSON.parse(localStorage.getItem("servicos")) || [];
-  profissionais = JSON.parse(localStorage.getItem("profissionais")) || [];
-  agendamentos = JSON.parse(localStorage.getItem("agendamentos")) || [];
-
-  atualizarSelects();
-  listarAgendamentos();
-  listarServicos();
-  listarProfissionais();
+document.getElementById(id).style.display="block"
 
 }
 
 function salvarDados(){
 
-  localStorage.setItem("servicos", JSON.stringify(servicos));
-  localStorage.setItem("profissionais", JSON.stringify(profissionais));
-  localStorage.setItem("agendamentos", JSON.stringify(agendamentos));
+localStorage.setItem("servicos",JSON.stringify(servicos))
+localStorage.setItem("profissionais",JSON.stringify(profissionais))
+localStorage.setItem("agendamentos",JSON.stringify(agendamentos))
+
+}
+
+function carregarDados(){
+
+servicos = JSON.parse(localStorage.getItem("servicos")) || []
+profissionais = JSON.parse(localStorage.getItem("profissionais")) || []
+agendamentos = JSON.parse(localStorage.getItem("agendamentos")) || []
+
+listarServicos()
+listarProfissionais()
+listarAgendamentos()
+atualizarSelects()
+gerarHorarios()
 
 }
 
 function atualizarSelects(){
 
-  const selectServico = document.getElementById("servico");
-  const selectProf = document.getElementById("profissional");
+let s = document.getElementById("servico")
+let p = document.getElementById("profissional")
 
-  if(!selectServico || !selectProf) return;
+s.innerHTML=""
+p.innerHTML=""
 
-  selectServico.innerHTML = "";
-  selectProf.innerHTML = "";
+servicos.forEach((serv,i)=>{
 
-  servicos.forEach((s,i)=>{
-    selectServico.innerHTML += `<option value="${i}">${s.nome}</option>`;
-  });
+s.innerHTML += `<option value="${i}">${serv.nome}</option>`
 
-  profissionais.forEach((p,i)=>{
-    selectProf.innerHTML += `<option value="${i}">${p.nome}</option>`;
-  });
+})
+
+profissionais.forEach((prof,i)=>{
+
+p.innerHTML += `<option value="${i}">${prof.nome}</option>`
+
+})
+
+}
+
+function gerarHorarios(){
+
+let select = document.getElementById("hora")
+
+select.innerHTML=""
+
+let inicio = 9
+let fim = 18
+
+for(let h=inicio;h<fim;h++){
+
+for(let m of ["00","30"]){
+
+let hora = h.toString().padStart(2,"0")+":"+m
+
+let ocupado = agendamentos.find(a=>a.hora==hora)
+
+if(!ocupado){
+
+select.innerHTML += `<option>${hora}</option>`
+
+}
+
+}
+
+}
 
 }
 
 function agendar(){
 
-  const cliente = document.getElementById("cliente").value;
-  const whatsapp = document.getElementById("whatsapp").value;
-  const data = document.getElementById("data").value;
-  const servicoIndex = document.getElementById("servico").value;
-  const profIndex = document.getElementById("profissional").value;
+let cliente = document.getElementById("cliente").value
+let whatsapp = document.getElementById("whatsapp").value
+let data = document.getElementById("data").value
+let hora = document.getElementById("hora").value
 
-  const agendamento = {
-    cliente,
-    whatsapp,
-    data,
-    servico: servicos[servicoIndex].nome,
-    profissional: profissionais[profIndex].nome
-  };
+let servico = servicos[document.getElementById("servico").value]
+let profissional = profissionais[document.getElementById("profissional").value]
 
-  agendamentos.push(agendamento);
+let agendamento = {
 
-  salvarDados();
-  listarAgendamentos();
+cliente,
+whatsapp,
+data,
+hora,
+servico:servico.nome,
+profissional:profissional.nome
 
-  alert("Agendado com sucesso");
+}
+
+agendamentos.push(agendamento)
+
+salvarDados()
+
+listarAgendamentos()
+
+gerarHorarios()
+
+alert("Agendado com sucesso")
 
 }
 
 function listarAgendamentos(){
 
-  const lista = document.getElementById("listaAgendamentos");
-  if(!lista) return;
+let lista = document.getElementById("listaAgendamentos")
 
-  lista.innerHTML = "";
+lista.innerHTML=""
 
-  agendamentos.forEach(a=>{
-    lista.innerHTML += `
-      <div class="card">
-      <b>${a.cliente}</b><br>
-      ${a.servico}<br>
-      ${a.profissional}<br>
-      ${a.data}
-      </div>
-    `;
-  });
+agendamentos.forEach(a=>{
+
+lista.innerHTML +=
+
+`<div class="card">
+
+<b>${a.cliente}</b><br>
+
+${a.servico}<br>
+
+${a.profissional}<br>
+
+${a.data} ${a.hora}
+
+</div>`
+
+})
 
 }
 
 function adicionarServico(){
 
-  const nome = document.getElementById("novoServico").value;
-  const duracao = document.getElementById("duracaoServico").value;
+let nome = document.getElementById("novoServico").value
+let duracao = document.getElementById("duracaoServico").value
 
-  servicos.push({nome,duracao});
+servicos.push({nome,duracao})
 
-  salvarDados();
-  listarServicos();
-  atualizarSelects();
+salvarDados()
+
+listarServicos()
+
+atualizarSelects()
 
 }
 
 function listarServicos(){
 
-  const lista = document.getElementById("listaServicos");
-  if(!lista) return;
+let lista = document.getElementById("listaServicos")
 
-  lista.innerHTML = "";
+lista.innerHTML=""
 
-  servicos.forEach((s,i)=>{
-    lista.innerHTML += `
-    <div class="card">
-      ${s.nome} (${s.duracao} min)
-      <button onclick="removerServico(${i})">Excluir</button>
-    </div>
-    `;
-  });
+servicos.forEach((s,i)=>{
+
+lista.innerHTML +=
+
+`<div class="card">
+
+${s.nome} (${s.duracao}min)
+
+<button onclick="removerServico(${i})">Excluir</button>
+
+</div>`
+
+})
 
 }
 
 function removerServico(i){
 
-  servicos.splice(i,1);
-  salvarDados();
-  listarServicos();
-  atualizarSelects();
+servicos.splice(i,1)
+
+salvarDados()
+
+listarServicos()
+
+atualizarSelects()
 
 }
 
 function adicionarProfissional(){
 
-  const nome = document.getElementById("novoProfissional").value;
+let nome = document.getElementById("novoProfissional").value
 
-  profissionais.push({nome});
+profissionais.push({nome})
 
-  salvarDados();
-  listarProfissionais();
-  atualizarSelects();
+salvarDados()
+
+listarProfissionais()
+
+atualizarSelects()
 
 }
 
 function listarProfissionais(){
 
-  const lista = document.getElementById("listaProfissionais");
-  if(!lista) return;
+let lista = document.getElementById("listaProfissionais")
 
-  lista.innerHTML = "";
+lista.innerHTML=""
 
-  profissionais.forEach((p,i)=>{
-    lista.innerHTML += `
-    <div class="card">
-      ${p.nome}
-      <button onclick="removerProfissional(${i})">Excluir</button>
-    </div>
-    `;
-  });
+profissionais.forEach((p,i)=>{
+
+lista.innerHTML +=
+
+`<div class="card">
+
+${p.nome}
+
+<button onclick="removerProfissional(${i})">Excluir</button>
+
+</div>`
+
+})
 
 }
 
 function removerProfissional(i){
 
-  profissionais.splice(i,1);
-  salvarDados();
-  listarProfissionais();
-  atualizarSelects();
+profissionais.splice(i,1)
+
+salvarDados()
+
+listarProfissionais()
+
+atualizarSelects()
 
 }
 
-window.onload = carregarDados;
+window.onload = carregarDados
