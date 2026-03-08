@@ -1,172 +1,180 @@
-function salvarDados(){
+let servicos = [];
+let profissionais = [];
+let agendamentos = [];
 
-localStorage.setItem("servicos",JSON.stringify(servicos))
-localStorage.setItem("profissionais",JSON.stringify(profissionais))
-localStorage.setItem("agendamentos",JSON.stringify(agendamentos))
+function mostrarTela(tela) {
+
+  document.getElementById("tela-agendar").style.display = "none";
+  document.getElementById("tela-agendamentos").style.display = "none";
+  document.getElementById("tela-config").style.display = "none";
+
+  document.getElementById("tela-" + tela).style.display = "block";
 
 }
 
 function carregarDados(){
 
-servicos = JSON.parse(localStorage.getItem("servicos")) || []
-profissionais = JSON.parse(localStorage.getItem("profissionais")) || []
-agendamentos = JSON.parse(localStorage.getItem("agendamentos")) || []
+  servicos = JSON.parse(localStorage.getItem("servicos")) || [];
+  profissionais = JSON.parse(localStorage.getItem("profissionais")) || [];
+  agendamentos = JSON.parse(localStorage.getItem("agendamentos")) || [];
+
+  atualizarSelects();
+  listarAgendamentos();
+  listarServicos();
+  listarProfissionais();
 
 }
 
-const app = document.getElementById("app")
+function salvarDados(){
 
-function abrirAgendar(){
-
-app.innerHTML = `
-
-<h2>Agendar</h2>
-
-<p>Aqui iremos criar um novo agendamento.</p>
-
-`
+  localStorage.setItem("servicos", JSON.stringify(servicos));
+  localStorage.setItem("profissionais", JSON.stringify(profissionais));
+  localStorage.setItem("agendamentos", JSON.stringify(agendamentos));
 
 }
 
-function abrirAgendamentos(){
+function atualizarSelects(){
 
-app.innerHTML = `
+  const selectServico = document.getElementById("servico");
+  const selectProf = document.getElementById("profissional");
 
-<h2>Agendei</h2>
+  if(!selectServico || !selectProf) return;
 
-<p>Aqui aparecerão os agendamentos feitos.</p>
+  selectServico.innerHTML = "";
+  selectProf.innerHTML = "";
 
-`
+  servicos.forEach((s,i)=>{
+    selectServico.innerHTML += `<option value="${i}">${s.nome}</option>`;
+  });
 
-}
-
-function abrirConfiguracoes(){
-
-app.innerHTML = `
-
-<h2>Configurações</h2>
-
-<p>Aqui você irá cadastrar serviços e profissionais.</p>
-
-`
-
-}
-function addServico(){
-
-let nome = document.getElementById("novoServico").value
-let duracao = document.getElementById("duracaoServico").value
-
-servicos.push({
-
-nome:nome,
-duracao:Number(duracao)
-
-})
-
-  function addProf(){
-
-let nome = document.getElementById("novoProf").value
-
-profissionais.push({
-
-nome:nome
-
-})
-
-salvarDados()
-atualizarConfig()
-
-}
-function addProf(){
-
-let nome = document.getElementById("novoProf").value
-
-profissionais.push({
-
-nome:nome
-
-})
-
-salvarDados()
-atualizarConfig()
-
-}
-  function gerarHorarios(){
-
-let select = document.getElementById("hora")
-
-select.innerHTML=""
-
-let inicio = 9
-let fim = 19
-
-for(let h=inicio;h<fim;h++){
-
-for(let m of ["00","30"]){
-
-let hora = h.toString().padStart(2,"0")+":"+m
-
-let ocupado = agendamentos.find(a=>a.hora==hora)
-
-if(!ocupado){
-
-select.innerHTML+=`<option>${hora}</option>`
+  profissionais.forEach((p,i)=>{
+    selectProf.innerHTML += `<option value="${i}">${p.nome}</option>`;
+  });
 
 }
 
-}
+function agendar(){
+
+  const cliente = document.getElementById("cliente").value;
+  const whatsapp = document.getElementById("whatsapp").value;
+  const data = document.getElementById("data").value;
+  const servicoIndex = document.getElementById("servico").value;
+  const profIndex = document.getElementById("profissional").value;
+
+  const agendamento = {
+    cliente,
+    whatsapp,
+    data,
+    servico: servicos[servicoIndex].nome,
+    profissional: profissionais[profIndex].nome
+  };
+
+  agendamentos.push(agendamento);
+
+  salvarDados();
+  listarAgendamentos();
+
+  alert("Agendado com sucesso");
 
 }
 
-}
-  function agendar(){
+function listarAgendamentos(){
 
-let cliente = document.getElementById("cliente").value
-let servico = document.getElementById("servico").value
-let profissional = document.getElementById("profissional").value
-let data = document.getElementById("data").value
-let hora = document.getElementById("hora").value
+  const lista = document.getElementById("listaAgendamentos");
+  if(!lista) return;
 
-agendamentos.push({
+  lista.innerHTML = "";
 
-cliente,
-servico,
-profissional,
-data,
-hora
-
-})
-
-salvarDados()
-
-alert("Agendamento criado")
+  agendamentos.forEach(a=>{
+    lista.innerHTML += `
+      <div class="card">
+      <b>${a.cliente}</b><br>
+      ${a.servico}<br>
+      ${a.profissional}<br>
+      ${a.data}
+      </div>
+    `;
+  });
 
 }
-  function atualizarAgendamentos(){
 
-let lista = document.getElementById("listaAgendamentos")
+function adicionarServico(){
 
-lista.innerHTML=""
+  const nome = document.getElementById("novoServico").value;
+  const duracao = document.getElementById("duracaoServico").value;
 
-agendamentos.forEach(a=>{
+  servicos.push({nome,duracao});
 
-lista.innerHTML+=`
-
-<div class="card">
-
-<strong>${a.hora}</strong><br>
-
-${a.cliente}<br>
-
-${a.servico} - ${a.profissional}
-
-</div>
-
-`
-
-})
+  salvarDados();
+  listarServicos();
+  atualizarSelects();
 
 }
-window.abrirAgendar = abrirAgendar
-window.abrirAgendamentos = abrirAgendamentos
-window.abrirConfiguracoes = abrirConfiguracoes
+
+function listarServicos(){
+
+  const lista = document.getElementById("listaServicos");
+  if(!lista) return;
+
+  lista.innerHTML = "";
+
+  servicos.forEach((s,i)=>{
+    lista.innerHTML += `
+    <div class="card">
+      ${s.nome} (${s.duracao} min)
+      <button onclick="removerServico(${i})">Excluir</button>
+    </div>
+    `;
+  });
+
+}
+
+function removerServico(i){
+
+  servicos.splice(i,1);
+  salvarDados();
+  listarServicos();
+  atualizarSelects();
+
+}
+
+function adicionarProfissional(){
+
+  const nome = document.getElementById("novoProfissional").value;
+
+  profissionais.push({nome});
+
+  salvarDados();
+  listarProfissionais();
+  atualizarSelects();
+
+}
+
+function listarProfissionais(){
+
+  const lista = document.getElementById("listaProfissionais");
+  if(!lista) return;
+
+  lista.innerHTML = "";
+
+  profissionais.forEach((p,i)=>{
+    lista.innerHTML += `
+    <div class="card">
+      ${p.nome}
+      <button onclick="removerProfissional(${i})">Excluir</button>
+    </div>
+    `;
+  });
+
+}
+
+function removerProfissional(i){
+
+  profissionais.splice(i,1);
+  salvarDados();
+  listarProfissionais();
+  atualizarSelects();
+
+}
+
+window.onload = carregarDados;
