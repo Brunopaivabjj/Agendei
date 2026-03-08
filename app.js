@@ -51,7 +51,22 @@ app.innerHTML = `
 `
 
 }
+function addServico(){
 
+let nome = document.getElementById("novoServico").value
+let duracao = document.getElementById("duracaoServico").value
+
+servicos.push({
+
+nome:nome,
+duracao:Number(duracao)
+
+})
+
+salvarDados()
+atualizarConfig()
+
+}
 window.abrirAgendar = abrirAgendar
 window.abrirAgendamentos = abrirAgendamentos
 window.abrirConfiguracoes = abrirConfiguracoes
