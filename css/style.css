@@ -1,25 +1,35 @@
 body{
-  margin:0;
-  font-family:'Inter', sans-serif;
-  background:#f4f6f9;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
+margin:0;
+font-family:Arial;
+background:#f4f4f4;
 }
 
-.container{
-  text-align:center;
-  background:white;
-  padding:40px;
-  border-radius:10px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.1);
+#app{
+padding:20px;
+padding-bottom:80px;
 }
 
-h1{
-  margin-bottom:10px;
+.menu{
+
+position:fixed;
+bottom:0;
+left:0;
+width:100%;
+
+display:flex;
+justify-content:space-around;
+
+background:white;
+border-top:1px solid #ddd;
+
+padding:10px 0;
+
 }
 
-p{
-  color:#666;
+.menu button{
+
+background:none;
+border:none;
+font-size:16px;
+
 }
