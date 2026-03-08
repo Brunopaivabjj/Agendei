@@ -1,13 +1,41 @@
 const app = document.getElementById("app")
 
-document.getElementById("novoCliente").onclick = () => {
-    app.innerHTML = "<h2>Cadastrar cliente</h2>"
+function abrirAgendar(){
+
+app.innerHTML = `
+
+<h2>Agendar</h2>
+
+<p>Aqui iremos criar um novo agendamento.</p>
+
+`
+
 }
 
-document.getElementById("novoAgendamento").onclick = () => {
-    app.innerHTML = "<h2>Novo agendamento</h2>"
+function abrirAgendamentos(){
+
+app.innerHTML = `
+
+<h2>Agendei</h2>
+
+<p>Aqui aparecerão os agendamentos feitos.</p>
+
+`
+
 }
 
-document.getElementById("verAgenda").onclick = () => {
-    app.innerHTML = "<h2>Agenda</h2>"
+function abrirConfiguracoes(){
+
+app.innerHTML = `
+
+<h2>Configurações</h2>
+
+<p>Aqui você irá cadastrar serviços e profissionais.</p>
+
+`
+
 }
+
+window.abrirAgendar = abrirAgendar
+window.abrirAgendamentos = abrirAgendamentos
+window.abrirConfiguracoes = abrirConfiguracoes
