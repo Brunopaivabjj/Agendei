@@ -1,3 +1,19 @@
+function salvarDados(){
+
+localStorage.setItem("servicos",JSON.stringify(servicos))
+localStorage.setItem("profissionais",JSON.stringify(profissionais))
+localStorage.setItem("agendamentos",JSON.stringify(agendamentos))
+
+}
+
+function carregarDados(){
+
+servicos = JSON.parse(localStorage.getItem("servicos")) || []
+profissionais = JSON.parse(localStorage.getItem("profissionais")) || []
+agendamentos = JSON.parse(localStorage.getItem("agendamentos")) || []
+
+}
+
 const app = document.getElementById("app")
 
 function abrirAgendar(){
