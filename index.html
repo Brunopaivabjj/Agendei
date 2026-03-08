@@ -102,8 +102,8 @@ font-size:14px;
 <label>Data</label>
 <input type="date" id="data">
 
-<label>Hora</label>
-<input type="time" id="hora">
+<label>Horário disponível</label>
+<select id="hora"></select>
 
 <button onclick="agendar()">Agendar</button>
 
@@ -163,144 +163,33 @@ font-size:14px;
 
 <script>
 
-let agendamentos = []
+function gerarHorarios(){
 
-let servicos = ["Corte","Barba"]
+let select = document.getElementById("hora")
 
-let profissionais = ["João","Carlos"]
+select.innerHTML=""
 
+let inicio = 9
+let fim = 18
 
+for(let h = inicio; h < fim; h++){
 
-function mostrarTela(tela){
+let hora = h.toString().padStart(2,"0")+":00"
 
-document.querySelectorAll(".tela")
-.forEach(t=>t.classList.remove("ativa"))
+let ocupado = agendamentos.find(a=>a.hora==hora)
 
-document.getElementById(tela).classList.add("ativa")
+if(!ocupado){
 
-if(tela=="telaAgendei") atualizarAgendamentos()
-
-if(tela=="telaConfig") atualizarConfig()
-
-}
-
-
-
-function agendar(){
-
-let cliente = document.getElementById("cliente").value
-
-let whatsapp = document.getElementById("whatsapp").value
-
-let servico = document.getElementById("servico").value
-
-let profissional = document.getElementById("profissional").value
-
-let data = document.getElementById("data").value
-
-let hora = document.getElementById("hora").value
-
-
-agendamentos.push({
-
-cliente,
-whatsapp,
-servico,
-profissional,
-data,
-hora
-
-})
-
-alert("Agendamento realizado")
+select.innerHTML += `<option>${hora}</option>`
 
 }
 
-
-
-function atualizarAgendamentos(){
-
-let lista = document.getElementById("listaAgendamentos")
-
-lista.innerHTML = ""
-
-agendamentos.forEach(a=>{
-
-lista.innerHTML += `
-
-<div class="card">
-
-<strong>${a.cliente}</strong><br>
-
-${a.servico} - ${a.profissional}<br>
-
-${a.data} às ${a.hora}
-
-</div>
-
-`
-
-})
-
 }
 
-
-
-function atualizarConfig(){
-
-let listaServ = document.getElementById("listaServicos")
-
-listaServ.innerHTML=""
-
-servicos.forEach(s=>{
-
-listaServ.innerHTML += `<div class="card">${s}</div>`
-
-})
-
-
-let listaProf = document.getElementById("listaProf")
-
-listaProf.innerHTML=""
-
-profissionais.forEach(p=>{
-
-listaProf.innerHTML += `<div class="card">${p}</div>`
-
-})
-
 }
-
-
-
-function addServico(){
-
-let nome = document.getElementById("novoServico").value
-
-servicos.push(nome)
-
-document.getElementById("novoServico").value=""
-
-atualizarConfig()
-
-}
-
-
-
-function addProf(){
-
-let nome = document.getElementById("novoProf").value
-
-profissionais.push(nome)
-
-document.getElementById("novoProf").value=""
-
-atualizarConfig()
-
-}
-
 
 </script>
 
 </body>
 </html>
+
