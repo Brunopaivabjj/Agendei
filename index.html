@@ -3,149 +3,82 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Agendei</title>
 
-<link rel="stylesheet" href="css/style.css">
-
-<style>
-
-body{
-font-family:Arial;
-margin:0;
-background:#f5f5f5;
-}
-
-.tela{
-display:none;
-padding:20px;
-padding-bottom:90px;
-}
-
-.tela.ativa{
-display:block;
-}
-
-input, select{
-width:100%;
-padding:10px;
-margin-top:5px;
-margin-bottom:15px;
-border-radius:6px;
-border:1px solid #ccc;
-}
-
-button{
-padding:12px;
-border:none;
-border-radius:6px;
-background:#2b7cff;
-color:white;
-width:100%;
-}
-
-.card{
-background:white;
-padding:15px;
-border-radius:8px;
-margin-bottom:10px;
-}
-
-.menu{
-position:fixed;
-bottom:0;
-left:0;
-width:100%;
-background:white;
-border-top:1px solid #ddd;
-display:flex;
-justify-content:space-around;
-padding:10px 0;
-}
-
-.menu button{
-background:none;
-color:black;
-font-size:14px;
-}
-
-</style>
+<link rel="stylesheet" href="style.css">
 
 </head>
-
 <body>
 
-<!-- TELA AGENDAR -->
+<header>
 
-<div id="telaAgendar" class="tela ativa">
+<h1>Agendei</h1>
 
-<h2>Agendar</h2>
+</header>
 
-<label>Cliente</label>
-<input id="cliente">
 
-<label>WhatsApp</label>
-<input id="whatsapp">
+<main>
 
-<label>Serviço</label>
-<select id="servico">
-<option>Corte</option>
-<option>Barba</option>
-</select>
+<!-- AGENDAR -->
 
-<label>Profissional</label>
-<select id="profissional">
-<option>João</option>
-<option>Carlos</option>
-</select>
+<section id="telaAgendar" class="tela">
 
-<label>Data</label>
+<h2>Novo Agendamento</h2>
+
+<input id="cliente" placeholder="Nome do cliente">
+
+<input id="whatsapp" placeholder="WhatsApp">
+
+<select id="servico"></select>
+
+<select id="profissional"></select>
+
 <input type="date" id="data">
 
-<label>Horário disponível</label>
 <select id="hora"></select>
 
 <button onclick="agendar()">Agendar</button>
 
-</div>
+</section>
 
 
-<!-- TELA AGENDAMENTOS -->
+<!-- AGENDAMENTOS -->
 
-<div id="telaAgendei" class="tela">
+<section id="telaAgendei" class="tela" style="display:none">
 
 <h2>Agendamentos</h2>
 
 <div id="listaAgendamentos"></div>
 
-</div>
+</section>
 
 
-<!-- TELA CONFIG -->
+<!-- CONFIG -->
 
-<div id="telaConfig" class="tela">
+<section id="telaConfig" class="tela" style="display:none">
 
-<h2>Configurações</h2>
+<h2>Serviços</h2>
 
-<h3>Serviços</h3>
+<input id="novoServico" placeholder="Nome do serviço">
 
-<input id="novoServico" placeholder="Novo serviço">
+<input id="duracaoServico" placeholder="Duração (min)">
 
-<button onclick="addServico()">Adicionar serviço</button>
+<button onclick="adicionarServico()">Adicionar</button>
 
 <div id="listaServicos"></div>
 
-<hr>
 
-<h3>Profissionais</h3>
+<h2>Profissionais</h2>
 
-<input id="novoProf" placeholder="Novo profissional">
+<input id="novoProfissional" placeholder="Nome">
 
-<button onclick="addProf()">Adicionar profissional</button>
+<button onclick="adicionarProfissional()">Adicionar</button>
 
-<div id="listaProf"></div>
+<div id="listaProfissionais"></div>
 
-</div>
+</section>
+
+</main>
 
 
 <!-- MENU -->
@@ -160,45 +93,7 @@ font-size:14px;
 
 </div>
 
-<script>
-
-function gerarHorarios(){
-
-let select = document.getElementById("hora")
-
-select.innerHTML=""
-
-let inicio = 9
-let fim = 18
-
-for(let h = inicio; h < fim; h++){
-
-for(let m of ["00","30"]){
-
-let hora = h.toString().padStart(2,"0")+":"+m
-
-let ocupado = agendamentos.find(a=>a.hora==hora)
-
-if(!ocupado){
-
-select.innerHTML += `<option>${hora}</option>`
-
-}
-
-}
-
-}
-
-}
-
-</script>
-
 <script src="app.js"></script>
 
 </body>
 </html>
-
-
-
-
-
