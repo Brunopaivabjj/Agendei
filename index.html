@@ -1,99 +1,99 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agendei</title>
-
-<link rel="stylesheet" href="style.css">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda Eletrônica</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="container">
+        <h1>Agenda Eletrônica</h1>
 
-<header>
+        <section id="configuracoes">
+            <h2>Configurações</h2>
 
-<h1>Agendei</h1>
+            <div class="config-section">
+                <h3>Serviços</h3>
+                <div id="lista-servicos">
+                    <!-- Serviços serão carregados aqui dinamicamente -->
+                    <p>Sem serviços cadastrados. Adicione um abaixo.</p>
+                </div>
+                <div class="form-add-edit">
+                    <h4>Adicionar/Editar Serviço</h4>
+                    <input type="hidden" id="id-servico-editando">
+                    <input type="text" id="nome-servico" placeholder="Nome do Serviço">
+                    <input type="number" id="preco-servico" placeholder="Preço (R$)">
+                    <input type="number" id="duracao-servico" placeholder="Duração (minutos)">
+                    <button onclick="adicionarOuAtualizarServico()">Salvar Serviço</button>
+                    <button onclick="cancelarEdicaoServico()" style="display: none;">Cancelar</button>
+                </div>
+            </div>
 
-</header>
+            <div class="config-section">
+                <h3>Prestadores de Serviço</h3>
+                <div id="lista-prestadores">
+                    <!-- Prestadores serão carregados aqui -->
+                    <p>Sem prestadores cadastrados. Adicione um abaixo.</p>
+                </div>
+                <div class="form-add-edit">
+                    <h4>Adicionar/Editar Prestador</h4>
+                    <input type="hidden" id="id-prestador-editando">
+                    <input type="text" id="nome-prestador" placeholder="Nome do Prestador">
+                    <input type="text" id="contato-prestador" placeholder="Telefone/Email do Prestador">
+                    <button onclick="adicionarOuAtualizarPrestador()">Salvar Prestador</button>
+                    <button onclick="cancelarEdicaoPrestador()" style="display: none;">Cancelar</button>
+                </div>
+            </div>
 
+             <div class="config-section">
+                <h3>Clientes</h3>
+                <div id="lista-clientes">
+                    <!-- Clientes serão carregados aqui -->
+                    <p>Sem clientes cadastrados. Adicione um abaixo.</p>
+                </div>
+                <div class="form-add-edit">
+                    <h4>Adicionar/Editar Cliente</h4>
+                    <input type="hidden" id="id-cliente-editando">
+                    <input type="text" id="nome-cliente" placeholder="Nome do Cliente">
+                    <input type="text" id="telefone-cliente" placeholder="Telefone do Cliente">
+                    <input type="email" id="email-cliente" placeholder="Email do Cliente">
+                    <button onclick="adicionarOuAtualizarCliente()">Salvar Cliente</button>
+                    <button onclick="cancelarEdicaoCliente()" style="display: none;">Cancelar</button>
+                </div>
+            </div>
+        </section>
 
-<main>
+        <section id="agendamento">
+            <h2>Agendar Novo Serviço</h2>
+            <div class="form-agendamento">
+                <select id="cliente-select">
+                    <option value="">Selecione um Cliente</option>
+                    <!-- Clientes serão populados aqui via JS -->
+                </select>
+                <select id="servico-select">
+                    <option value="">Selecione um Serviço</option>
+                    <!-- Serviços serão populados aqui via JS -->
+                </select>
+                <select id="prestador-select">
+                    <option value="">Selecione um Prestador</option>
+                    <!-- Prestadores serão populados aqui via JS -->
+                </select>
+                <input type="datetime-local" id="data-hora-agendamento">
+                <textarea id="observacoes-agendamento" placeholder="Observações"></textarea>
+                <button onclick="salvarAgendamento()">Agendar</button>
+            </div>
+        </section>
 
-<!-- AGENDAR -->
+        <section id="lista-agendamentos">
+            <h2>Meus Agendamentos</h2>
+            <ul id="agendamentos-list">
+                <!-- Agendamentos serão carregados aqui -->
+                <li>Nenhum agendamento encontrado.</li>
+            </ul>
+        </section>
+    </div>
 
-<section id="telaAgendar" class="tela">
-
-<h2>Novo Agendamento</h2>
-
-<input id="cliente" placeholder="Nome do cliente">
-
-<input id="whatsapp" placeholder="WhatsApp">
-
-<select id="servico"></select>
-
-<select id="profissional"></select>
-
-<input type="date" id="data">
-
-<select id="hora"></select>
-
-<button onclick="agendar()">Agendar</button>
-
-</section>
-
-
-<!-- AGENDAMENTOS -->
-
-<section id="telaAgendei" class="tela" style="display:none">
-
-<h2>Agendamentos</h2>
-
-<div id="listaAgendamentos"></div>
-
-</section>
-
-
-<!-- CONFIG -->
-
-<section id="telaConfig" class="tela" style="display:none">
-
-<h2>Serviços</h2>
-
-<input id="novoServico" placeholder="Nome do serviço">
-
-<input id="duracaoServico" placeholder="Duração (min)">
-
-<button onclick="adicionarServico()">Adicionar</button>
-
-<div id="listaServicos"></div>
-
-
-<h2>Profissionais</h2>
-
-<input id="novoProfissional" placeholder="Nome">
-
-<button onclick="adicionarProfissional()">Adicionar</button>
-
-<div id="listaProfissionais"></div>
-
-</section>
-
-</main>
-
-
-<!-- MENU -->
-
-<div class="menu">
-
-<button onclick="mostrarTela('telaAgendar')">Agendar</button>
-
-<button onclick="mostrarTela('telaAgendei')">Agendei</button>
-
-<button onclick="mostrarTela('telaConfig')">Config</button>
-
-</div>
-
-<script src="app.js"></script>
-
+    <script src="script.js"></script>
 </body>
 </html>
